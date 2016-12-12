@@ -10,7 +10,7 @@ using namespace cv;
 using namespace std;
 
 
-// helper function: finds a cosine of angle between vectors from pt0->pt1 and from pt0->pt2
+// 计算两条线段的夹角:pt0->pt1 and from pt0->pt2
 static double angle( Point pt1, Point pt2, Point pt0 )
 {
     double dx1 = pt1.x - pt0.x;
@@ -126,41 +126,45 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 	
 	if (areaflag=="zuguanti")
 	{
-		//图像漫水和分割（先二值化再漫水）
+		//二值化
 		Mat floodimg;
-		preciseimg.copyTo(floodimg);
+		roughimg.copyTo(floodimg);
 		cvtColor(floodimg, floodimg, CV_RGB2GRAY);
 		threshold(floodimg, floodimg, 180, 255, CV_THRESH_BINARY_INV);
+		
+		//形态学处理
 		int Absolute_offset = 1;
 		Mat element = getStructuringElement(MORPH_CROSS, Size(Absolute_offset * 2 + 1, Absolute_offset * 2 + 1), Point(Absolute_offset, Absolute_offset));
 		morphologyEx(floodimg, floodimg, CV_MOP_CLOSE, element);
 		cvtColor(floodimg, floodimg, CV_GRAY2BGR);
 
+		//漫水
 		Mat imgbak;
-		copyMakeBorder(preciseimg, imgbak, 1, 1, 1, 1, BORDER_REPLICATE);
-		Mat mask(preciseimg.rows + 2, preciseimg.cols + 2, CV_8UC1, Scalar::all(0));
-		Mat now(preciseimg.rows + 2, preciseimg.cols + 2, CV_8UC3, Scalar::all(0));
+		copyMakeBorder(roughimg, imgbak, 1, 1, 1, 1, BORDER_REPLICATE);
+		Mat mask(roughimg.rows + 2, roughimg.cols + 2, CV_8UC1, Scalar::all(0));
+		Mat now(roughimg.rows + 2, roughimg.cols + 2, CV_8UC3, Scalar::all(0));
 
 		const Scalar& colorDiff = Scalar::all(50);
 		int flag = 4 | (255 << 8);
-		int downarea = 200; // img.cols*img.rows / 35;
-		int uparea = preciseimg.cols*preciseimg.rows / 5;
+		int downarea = 200; // img.cols*img.rows / 35;  //面积过滤条件
+		int uparea = roughimg.cols*roughimg.rows / 5;
 
 		vector<int> floodArea;
 		vector<float> floodRatio;
 		vector<Rect> floodRects;
-		for (int y = 0; y < preciseimg.rows; y++)
+		for (int y = 0; y < roughimg.rows; y++)
 		{
-			for (int x = 0; x < preciseimg.cols; x++)
+			for (int x = 0; x < roughimg.cols; x++)
 			{
 				if (mask.at<uchar>(y + 1, x + 1) == 0)
 				{
 					Scalar newVal(rng(256), rng(256), rng(256));
 					Rect floodRect;
-					int area = floodFill(floodimg, mask, Point(x, y), newVal, &floodRect, colorDiff, colorDiff,flag);
-
-					float  wrap_ratio = min(float(floodRect.width) / floodRect.height, float(floodRect.height) / floodRect.width);
-					float  occupation_ratio = float(area) / float(floodRect.area());
+					int area = floodFill(floodimg, mask, Point(x, y), newVal, &floodRect, colorDiff, colorDiff,flag);  				//漫水区域面积
+					float  wrap_ratio = min(float(floodRect.width) / floodRect.height, float(floodRect.height) / floodRect.width);  //漫水区域的外接矩形形状
+					float  occupation_ratio = float(area) / float(floodRect.area());												//漫水占比=漫水区域的面积/外接矩形的面积
+					
+					//过滤条件
 					if (area<downarea || area>uparea)
 						continue;
 
@@ -177,7 +181,6 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 				}
 			}
 		}
-
 	}
 
 }

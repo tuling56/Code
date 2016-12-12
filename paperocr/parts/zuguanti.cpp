@@ -70,14 +70,14 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 		return 0;
 	}
 
-	//初始化引擎
+	//step1:初始化引擎
 	tesseract::TessBaseAPI tess;
 	initOCR(tess);
 
 	//对主观题进行位置左右划分
 	sort(floodRects.begin(), floodRects.end(), SortByX);
 
-	//识别和保存
+	//step2:识别和保存
 	char s[50];
 	vector< vector<float> > allconfidences;
 	for (vector<Rect>::iterator itrect = floodRects.begin(); itrect != floodRects.end(); itrect++)
@@ -114,6 +114,6 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			putText(preciseimg, answervalue, now_answer.where.tl(), FONT_HERSHEY_SIMPLEX, scale_font, Scalar(0, 0, 255), (int)(2 * scale_font));
 	}
 
-	//关闭引擎
+	//step3:关闭引擎
 	closeOCR(tess);
 }
