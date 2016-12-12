@@ -15,14 +15,14 @@ int areaDecomposeOCR( Mat img,string areaflag,vector<SLocAnswer> &locs)
 	
 	if (areaflag=="xuehao")	{
 		cout << "学号区" << endl;
-		//do something
+		//调用python接口返回学号
 	}
 	else if (areaflag=="xuanzeti"){
 		selectProcess(img, areaflag, locs);
 	}
-	else if (areaflag=="jieda")	{
+	else if (areaflag=="zuguanti")	{
 		cout << "解答题区" << endl;
-		//do something
+		zuguanti(img,areaflag,locs); //处理的是每个主观题
 	}
 	else{
 		cout << "非定义区域" << endl;

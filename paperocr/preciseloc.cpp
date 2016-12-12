@@ -31,7 +31,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 {
 	if (areaflag=="xuehao"){
 		cout <<"学号区暂不检测" << endl;
-		//调用python接口返回学号
+		//确定二维码的位置，形态学膨胀和形状分析
 		return -1;
 	}
 
@@ -122,11 +122,61 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 			//destroyAllWindows();
 		}
 
-
 	}
 	
 	if (areaflag=="zuguanti")
 	{
+		//图像漫水和分割（先二值化再漫水）
+		Mat floodimg;
+		preciseimg.copyTo(floodimg);
+		cvtColor(floodimg, floodimg, CV_RGB2GRAY);
+		threshold(floodimg, floodimg, 180, 255, CV_THRESH_BINARY_INV);
+		int Absolute_offset = 1;
+		Mat element = getStructuringElement(MORPH_CROSS, Size(Absolute_offset * 2 + 1, Absolute_offset * 2 + 1), Point(Absolute_offset, Absolute_offset));
+		morphologyEx(floodimg, floodimg, CV_MOP_CLOSE, element);
+		cvtColor(floodimg, floodimg, CV_GRAY2BGR);
+
+		Mat imgbak;
+		copyMakeBorder(preciseimg, imgbak, 1, 1, 1, 1, BORDER_REPLICATE);
+		Mat mask(preciseimg.rows + 2, preciseimg.cols + 2, CV_8UC1, Scalar::all(0));
+		Mat now(preciseimg.rows + 2, preciseimg.cols + 2, CV_8UC3, Scalar::all(0));
+
+		const Scalar& colorDiff = Scalar::all(50);
+		int flag = 4 | (255 << 8);
+		int downarea = 200; // img.cols*img.rows / 35;
+		int uparea = preciseimg.cols*preciseimg.rows / 5;
+
+		vector<int> floodArea;
+		vector<float> floodRatio;
+		vector<Rect> floodRects;
+		for (int y = 0; y < preciseimg.rows; y++)
+		{
+			for (int x = 0; x < preciseimg.cols; x++)
+			{
+				if (mask.at<uchar>(y + 1, x + 1) == 0)
+				{
+					Scalar newVal(rng(256), rng(256), rng(256));
+					Rect floodRect;
+					int area = floodFill(floodimg, mask, Point(x, y), newVal, &floodRect, colorDiff, colorDiff,flag);
+
+					float  wrap_ratio = min(float(floodRect.width) / floodRect.height, float(floodRect.height) / floodRect.width);
+					float  occupation_ratio = float(area) / float(floodRect.area());
+					if (area<downarea || area>uparea)
+						continue;
+
+					if (wrap_ratio < 0.7 || occupation_ratio < 0.7)
+						continue;
+
+					floodArea.push_back(area);
+					floodRatio.push_back(wrap_ratio);
+					floodRects.push_back(floodRect);
+
+					imgbak.copyTo(now, mask);
+					//rectangle(now, floodRect, Scalar(0, 0, 255), 1, CV_AA);
+
+				}
+			}
+		}
 
 	}
 
