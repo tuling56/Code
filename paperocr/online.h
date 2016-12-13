@@ -1,10 +1,11 @@
 #ifndef ONLINE_H
 #define ONLINE_H
 
-#include <vector>
-#include <string>
-#include <iostream>
 #include <stdio.h>
+#include <string>
+#include <vector>
+#include <iostream>
+
 //tesseatct
 #include <baseapi.h>
 #include <basedir.h>
@@ -16,8 +17,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 //定义区块（粗定位）
-struct SRPart
-{
+struct SRPart{
 	std::string what;   				//意义
 	cv::Rect where;     				//位置	
 };
@@ -43,28 +43,28 @@ std::string getFilenameWithNoExt(std::string s);
 
 /*****************************流程函数声明*******************************/
 //粗定位（得到答题的大致区域）
-int roughloc(cv::Mat src, std::vector<SRPart> &rougharea);
+int roughloc(cv::Mat src, std::vector<SRPart > &rougharea);
 
 //精确定位(得到精确的整个答题区)
-int preciseloc(cv::Mat src, std::string areaflag,std::vector<SRPart> &locs);
+int preciseloc(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &locs);
 
 //获取答题内容（精确到每道题和答案）
-int getanswer(cv::Mat src, std::string areaflag,std::vector<SLocAnswer> &answers);
+int getanswer(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &answers);
 
 //*****子系统
 std::string xuehaoProcess(cv::Mat preciseimg, std::string areaflag);
-int selectProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer> &locs);
-int zuguantiProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer> &locs);
+int selectProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
+int zuguantiProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
 
 
 //识别结果保存和再训练
-int savetojson(std::string stuNum, std::vector<SLocAnswer> locanswers);
-int savetotrain(std::string outpath, std::vector<SLocAnswer> locanswers);
+int savetojson(std::string stuNum, std::vector<SLocAnswer > locanswers);
+int savetotrain(std::string outpath, std::vector<SLocAnswer > locanswers);
 
 
 /*****************************功能函数声明*******************************/
 //识别答题区（后期将初始化引擎工作提出到外层）
-/*part1；tesseract*/
+/*part1:tesseract*/
 int ocranswer(cv::Mat src, std::string & output, std::vector<std::string> &detect_words, std::vector<float> & detect_confidences);
 int ocranswer_seqs(std::vector<cv::Mat> srcs, std::vector<std::string> & outputs, std::vector<std::vector<std::string> > &detect_chars, std::vector<std::vector<float> > & detect_confidences);
 

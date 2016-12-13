@@ -1,8 +1,8 @@
 #include "online.h"
+#include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include <string.h>
 
 using namespace cv;
 using namespace std;
@@ -23,13 +23,13 @@ string  singleproc(string filename,string resTrainpath)
 	
     //输出以作训练的图像
 	if (NULL==opendir(resTrainpath.c_str())){
-		mkdir(outpath.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		mkdir(resTrainpath.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	}
-	string output = outpath +fname;
+	string output = resTrainpath +fname;
 
 
-	vector<SRPart> rough_area;		//粗定位的区域
-	vector<SRPart> precise_area;	//精确定位区域
+	vector<SRPart> rough_area;		//粗定位的区域（相对于整体的位置）
+	vector<SRPart> precise_area;	//精确定位区域（相对于粗定位的位置）
 	vector<SLocAnswer> loc_answer;	//答题区域和答案(含选择题和主观题)
 	
 	//step1:粗定位
@@ -62,7 +62,10 @@ string  singleproc(string filename,string resTrainpath)
 		}
 	}
 
-	savetotrain(retTrainpath, loc_answer);
+
+
+	//结果文件保存以再训练
+	savetotrain(resTrainpath, loc_answer);
 	
 
 	return 0;

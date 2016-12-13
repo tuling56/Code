@@ -207,7 +207,7 @@ int roughloc(Mat src, vector<SRPart>&rougharea)
 
 
 //功能测试区
-int main()
+int main_roughloc()
 {
 	string filename = "./data/img072.jpg";
 	Mat src = imread(filename);

@@ -1,14 +1,8 @@
-#include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include <iostream>
 #include <math.h>
-#include <string.h>
 #include "online.h"
 
 using namespace cv;
 using namespace std;
-
 
 // 计算两条线段的夹角:pt0->pt1 and from pt0->pt2
 static double angle( Point pt1, Point pt2, Point pt0 )
@@ -23,11 +17,11 @@ static double angle( Point pt1, Point pt2, Point pt0 )
 
 /* 功能：精确定位
  * 输入：粗定位图像，该区域标识
- * 输出：细定位的结果
+ * 输出：细定位的结果（相对于粗定位的位置）
  * 返回：精确定位到的结果区域的个数
  *
  */
-int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
+int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 {
 	if (areaflag=="xuehao")
 	{
@@ -69,7 +63,6 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 					//将这个轮廓的外接矩形保存
 					Mat qr=floodimg(brect);
 					imwrite("qr.bmp",qr);
-
 				}
 				
 			}
@@ -98,7 +91,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 
 	        for( int l = 0; l < N; l++ )
 	        {
-	             if( l == 0 ) {
+	            if( l == 0 ) {
 	                Canny(gray0, gray,0, thresh, 5);
 					Mat element = getStructuringElement(MORPH_RECT, Size(2,2));
 	                dilate(gray, gray, Mat(), Point(-1,-1));
@@ -138,7 +131,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 							//精确定位在粗定位上进行了12像素的扩张
 							Rect expandbox=Rect(box.tl() + Point(-6, -6), box.br()+ Point(6, 6));
 							
-							SRPart partselect;
+							SLocAnswer partselect;
 							ostringstream s1;
 							s1 << areaflag<<"_" << num++;
 							partselect.what = s1.str();
@@ -148,8 +141,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 							RNG rng = theRNG();
 							Scalar newVal(rng(256), rng(256), rng(256));
 							rectangle(demo, expandbox,Scalar(0,255,0), 2, CV_AA);
-							rectangle(demo, box, newVal, 1, CV_AA);
-						
+							rectangle(demo, box, newVal, 1, CV_AA);						
 						}	
 	                }
 	            }
@@ -157,10 +149,10 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 	    }
 
 	    //效果展示
-	    if (0)	{
+	    if (1)	{
 			imshow(areaflag, demo);
-			//waitKey();
-			//destroyAllWindows();
+			waitKey();
+			destroyAllWindows();
 		}
 
 	}
@@ -184,6 +176,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 		copyMakeBorder(roughimg, imgbak, 1, 1, 1, 1, BORDER_REPLICATE);
 		Mat mask(roughimg.rows + 2, roughimg.cols + 2, CV_8UC1, Scalar::all(0));
 		Mat now(roughimg.rows + 2, roughimg.cols + 2, CV_8UC3, Scalar::all(0));
+	
 
 		const Scalar& colorDiff = Scalar::all(50);
 		int flag = 4 | (255 << 8);
@@ -194,6 +187,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 		vector<float> floodRatio;
 		vector<Rect> floodRects;
 		int num=0;
+		RNG rng = theRNG();
 		for (int y = 0; y < roughimg.rows; y++)
 		{
 			for (int x = 0; x < roughimg.cols; x++)
@@ -202,15 +196,11 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 				{
 					Scalar newVal(rng(256), rng(256), rng(256));
   					Rect floodRect;
- -					int area = floodFill(floodimg, mask, Point(x, y), newVal, &floodRect, colorDiff, colorDiff,flag);
- -
- -					float  wrap_ratio = min(float(floodRect.width) / floodRect.height, float(floodRect.height) / floodRect.width);
- -					float  occupation_ratio = float(area) / float(floodRect.area());
- +					int area = floodFill(floodimg, mask, Point(x, y), newVal, &floodRect, colorDiff, colorDiff,flag);  				//漫水区域面积
- +					float  wrap_ratio = min(float(floodRect.width) / floodRect.height, float(floodRect.height) / floodRect.width);  //漫水区域的外接矩形形状
- +					float  occupation_ratio = float(area) / float(floodRect.area());												//漫水占比=漫水区域的面积/外接矩形的面积
- +					
- +					//过滤条件
+ 					int area = floodFill(floodimg, mask, Point(x, y), newVal, &floodRect, colorDiff, colorDiff,flag);  				//漫水区域面积
+ 					float  wrap_ratio = min(float(floodRect.width) / floodRect.height, float(floodRect.height) / floodRect.width);  //漫水区域的外接矩形形状
+ 					float  occupation_ratio = float(area) / float(floodRect.area());												//漫水占比=漫水区域的面积/外接矩形的面积
+ 					
+ 					//过滤条件
   					if (area<downarea || area>uparea)
   						continue;
   
@@ -224,7 +214,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
  					imgbak.copyTo(now, mask);
 
  					//主观题纳入
- 					SRPart part_zuguan;
+ 					SLocAnswer part_zuguan;
 					ostringstream s1;
 					s1 << areaflag<<"_" << num++;
 					part_zuguan.what = s1.str();
@@ -235,14 +225,13 @@ int preciseloc(Mat roughimg,string areaflag,vector<SRPart> &precise_boxes)
 			}
 		}
 	}
-
 }
 
 
 //功能测试区
 int main()
 {
-	string filename = "./data/zuguanti.jpg";
+	string filename = "E:\\CV\\paperocr\\data\\答题卡样式\\zuguanti.jpg";
 	Mat src = imread(filename);
 	if (src.empty()){
 		cout << "load fail" << endl;
@@ -254,13 +243,14 @@ int main()
 
 	return 0;
 
-	for (vector<SRPart>::iterator itr=precisearea.begin();itr!=precisearea.end();itr++)
+	/*
+	for (vector<SLocAnswer>::iterator itr=precisearea.begin();itr!=precisearea.end();itr++)
 	{
-		
 		//resize(demo, demo, Size(), 0.5, 0.5);
 		imshow("rougloc", itr->pic);
 		waitKey();
 	}
+	*/
 
 	return 0;
 }
