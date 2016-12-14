@@ -23,7 +23,7 @@ static double angle( Point pt1, Point pt2, Point pt0 )
  */
 int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 {
-	if (areaflag=="xuehao")
+	if (areaflag=="xuehaoti")
 	{
 		//二值化
 		Mat floodimg;
@@ -35,16 +35,18 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 		int Absolute_offset = 1;
 		Mat element = getStructuringElement(MORPH_CROSS, Size(Absolute_offset * 2 + 1, Absolute_offset * 2 + 1), Point(Absolute_offset, Absolute_offset));
 		morphologyEx(floodimg, floodimg, CV_MOP_CLOSE, element);
-		cvtColor(floodimg, floodimg, CV_GRAY2BGR);
+		//cvtColor(floodimg, floodimg, CV_GRAY2BGR);
 
 		//轮廓验证
 		vector<vector<Point> > contours;
 		Mat demo;
 		roughimg.copyTo(demo);
 		findContours(floodimg, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-		drawContours(demo, contours, -1, Scalar(0, 255, 255), 1);
+		drawContours(demo, contours, -1, Scalar(255, 255, 0), 1);
 
 		//cout<<"lunkuo filter"<<endl;
+		int downarea = 250;
+		int uparea = floodimg.rows*floodimg.cols / 3;
 		vector<vector<Point> > approx;
 		for (size_t i = 0; i < contours.size(); i++)
 		{
@@ -55,14 +57,15 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 				float radius;
 				Point2f center;
 				Rect brect=boundingRect(Mat(contours[i]));
-				
+			
 				float rect_area = brect.width*brect.height;
 				float ratio = rect_area / contour_area;
 				if (ratio > 1.2&&ratio<2)
 				{
 					//将这个轮廓的外接矩形保存
-					Mat qr=floodimg(brect);
-					imwrite("qr.bmp",qr);
+					Mat qr=roughimg(brect);
+					imshow("now arc",qr);
+					waitKey();
 				}
 				
 			}
@@ -157,6 +160,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 
 	}
 	
+	//要根据主观题的特点进行优化
 	if (areaflag=="zuguanti")
 	{
 		//二值化
@@ -225,13 +229,15 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 			}
 		}
 	}
+
+	return 0;
 }
 
 
 //功能测试区
 int main()
 {
-	string filename = "E:\\CV\\paperocr\\data\\答题卡样式\\zuguanti.jpg";
+	string filename = "C:\\Users\\xl\\Desktop\\Code\\paperocr\\samples\\xuehaoti.bmp";
 	Mat src = imread(filename);
 	if (src.empty()){
 		cout << "load fail" << endl;
@@ -239,7 +245,7 @@ int main()
 	}
 
 	vector<SLocAnswer> precisearea;
-	preciseloc(src,"zuguanti",precisearea);
+	preciseloc(src,"xuehaoti",precisearea);
 
 	return 0;
 
