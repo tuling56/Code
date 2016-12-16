@@ -1,12 +1,7 @@
-#include "opencv2/core/core.hpp"  
-#include "opencv2/highgui/highgui.hpp"  
-#include "opencv2/imgproc/imgproc.hpp"  
-#include <iostream>  
 #include "online.h"
 
 using namespace cv;
 using namespace std;
-
 
 /*
  * 功能:自定义排序函数  

@@ -1,7 +1,7 @@
 /************************************************************************
 * Copyright(c) 2015 tuling56
 *
-* File:	tesseract.cpp
+* File:	ocr_tess.cpp
 * Brief: 调用tesseract进行识别的接口
 * Reference:
 * Status: 

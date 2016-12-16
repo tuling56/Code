@@ -5,9 +5,6 @@
 * Brief:将结果保存为xml文件,txt文件及识别和定位的结果
 * Status:
 ************************************************************************/
-#include <iostream>
-#include <vector>
-#include <string>
 #include <sstream>
 #include <fstream>
 #include "online.h"
