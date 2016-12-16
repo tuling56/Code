@@ -23,6 +23,7 @@ static double angle( Point pt1, Point pt2, Point pt0 )
  */
 int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 {
+	//根据学号的特点进行优化
 	if (areaflag=="xuehaoti")
 	{
 		//二值化
@@ -47,6 +48,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 		//cout<<"lunkuo filter"<<endl;
 		int downarea = 250;
 		int uparea = floodimg.rows*floodimg.cols / 3;
+		int num = 0;
 		vector<vector<Point> > approx;
 		for (size_t i = 0; i < contours.size(); i++)
 		{
@@ -66,12 +68,21 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 					Mat qr=roughimg(brect);
 					imshow("now arc",qr);
 					waitKey();
+
+					//外框学号二维码纳入精确定位结果
+					SLocAnswer part_xuehao;
+					ostringstream s1;
+					s1 << areaflag << "_" << num++;
+					part_xuehao.what = s1.str();
+					part_xuehao.where = brect;
+					precise_boxes.push_back(part_xuehao);
 				}
 				
 			}
 		}
 	}
 
+	//选择题的精确定位已解决
 	if( areaflag=="xuanzeti" )
 	{
 
@@ -133,18 +144,19 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 
 							//精确定位在粗定位上进行了12像素的扩张
 							Rect expandbox=Rect(box.tl() + Point(-6, -6), box.br()+ Point(6, 6));
-							
-							SLocAnswer partselect;
-							ostringstream s1;
-							s1 << areaflag<<"_" << num++;
-							partselect.what = s1.str();
-							partselect.where = expandbox;
-							precise_boxes.push_back(partselect);
 
 							RNG rng = theRNG();
 							Scalar newVal(rng(256), rng(256), rng(256));
 							rectangle(demo, expandbox,Scalar(0,255,0), 2, CV_AA);
-							rectangle(demo, box, newVal, 1, CV_AA);						
+							rectangle(demo, box, newVal, 1, CV_AA);		
+
+							//选择题框纳入精定位结果
+							SLocAnswer partselect;
+							ostringstream s1;
+							s1 << areaflag << "_" << num++;
+							partselect.what = s1.str();
+							partselect.where = expandbox;
+							precise_boxes.push_back(partselect);
 						}	
 	                }
 	            }

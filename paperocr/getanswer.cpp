@@ -9,20 +9,20 @@ using namespace std;
  * 输入：精确定位后的区域，该答题区域的标示areaflag
  * 输出：每个答题项的位置，意义和（内容）
  */
-int areaDecomposeOCR( Mat img,string areaflag,vector<SLocAnswer> &locs)
+int areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs)
 {
-	CV_Assert( !img.empty() );
+	CV_Assert( !preciseimg.empty() );
 	
-	if (areaflag=="xuehao")	{
+	if (areaflag=="xuehao")	{			//调用python接口返回学号
 		cout << "学号区" << endl;
-		//调用python接口返回学号
+		string xuehao=xuehaotiProcess(preciseimg, areaflag);
 	}
 	else if (areaflag=="xuanzeti"){
-		selectProcess(img, areaflag, locs);
+		selectProcess(preciseimg, areaflag, locs);
 	}
 	else if (areaflag=="zuguanti")	{
 		cout << "解答题区" << endl;
-		zuguanti(img,areaflag,locs); //处理的是每个主观题
+		zuguantiProcess(preciseimg, areaflag, locs); //处理的是每个主观题
 	}
 	else{
 		cout << "非定义区域" << endl;

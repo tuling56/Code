@@ -52,7 +52,7 @@ int preciseloc(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &locs)
 int getanswer(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &answers);
 
 //*****子系统
-std::string xuehaoProcess(cv::Mat preciseimg, std::string areaflag);
+std::string xuehaotiProcess(cv::Mat preciseimg, std::string areaflag);
 int selectProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
 int zuguantiProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
 

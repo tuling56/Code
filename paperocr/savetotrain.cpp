@@ -10,19 +10,19 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#include "../online.h"
+#include "online.h"
 
 using namespace cv;
 using namespace std;
 
 /*
- *	功能：将一个学生试卷的定位和识别结果写入json文件 
- *	      交互接口
+ *	功能：将一个学生试卷的定位和识别结果写入json文件,交互接口
+ *	输入:stuNum（二维码识别结果）,vector<SLocAnswer> locanswers (选择题每个部分和主观题每个部分)
  * 
  */
 int savetojson(string stuNum, vector<SLocAnswer> locanswers)
 {
-	string resfile = stuNum + "_tess.txt";
+	string resfile = stuNum + "_tess.json";
 	ofstream ocrres(resfile.c_str());
 	for (vector<SLocAnswer>::iterator it = locanswers.begin(); it != locanswers.end(); it++)
 	{
@@ -37,8 +37,9 @@ int savetojson(string stuNum, vector<SLocAnswer> locanswers)
 
 
 /*
- *	功能：保存处理后的答题区域,每个答题域一个图像
- *	      用于训练样本收集
+ *	功能：保存处理后的答题区域,每个答题域一个图像，用于训练样本收集
+ *	输入：outpath(训练图像保存位置)，
+ *	      
  */
 int savetotrain(string outpath, vector<SLocAnswer> locanswers)
 {
