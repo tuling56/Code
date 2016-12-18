@@ -1,12 +1,12 @@
 /************************************************************************
 * Copyright(c) 2015 tuling56
 *
-* File:	main.cpp
+* File:ocr_cnn.cpp
 * Brief: cpp调用Python的Tensor识别模块
 * Status: 
 * Date:	[6/25/2015 jmy]
 ************************************************************************/
-#include<python2.7/Python.h>  
+#include<Python.h> //#include<python2.7/Python.h>  
 #include<stdio.h>
 #include<string>
 

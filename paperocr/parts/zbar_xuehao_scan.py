@@ -25,5 +25,5 @@ def qr_scan(fimg):
 	return data
 
 if __name__ == '__main__':
-	fimg="qr.bmp"
+	fimg="../samples/qr.bmp"
 	qr_scan()

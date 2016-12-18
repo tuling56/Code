@@ -4,6 +4,9 @@ using namespace cv;
 using namespace std;
 
 
+extern bool SortByX(const Rect &p1, const Rect &p2);
+
+
 /* 主观题处理
  * 输入：精定位图像，区域标示（例如：zguanti_1）
  * 输出：位置和识别结果
@@ -79,6 +82,7 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 
 	//step2:识别和保存
 	char s[50];
+	int j = 0;
 	vector< vector<float> > allconfidences;
 	for (vector<Rect>::iterator itrect = floodRects.begin(); itrect != floodRects.end(); itrect++)
 	{
@@ -100,7 +104,7 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			string answervalue;
 			vector<string> answercontent;
 			vector<float> answerconfidences;
-			OCR(tess, answern, answervalue,conf,answercontent, answerconfidences);
+			OCR(tess, answer, answervalue,conf,answercontent, answerconfidences);
 			now_answer.pic = answer;
 			now_answer.content = answervalue;
 			now_answer.confidences = answerconfidences;

@@ -29,7 +29,7 @@ string  singleproc(string filename,string resTrainpath)
 
 
 	vector<SRPart> rough_area;		//粗定位的区域（相对于整体的位置）
-	vector<SRPart> precise_area;	//精确定位区域（相对于粗定位的位置）
+	vector<SLocAnswer> precise_area;	//精确定位区域（相对于粗定位的位置）
 	vector<SLocAnswer> loc_answer;	//答题区域和答案(含选择题和主观题)
 	
 	//step1:粗定位
@@ -53,7 +53,7 @@ string  singleproc(string filename,string resTrainpath)
 			continue;
 		}
 
-		for (vector<SRPart>::iterator itp = precise_area.begin(); itp != precise_area.end();itp++)
+		for (vector<SLocAnswer>::iterator itp = precise_area.begin(); itp != precise_area.end();itp++)
 		{
 			Mat precise = rough(itp->where);
 			getanswer(precise,areaflag,loc_answer);

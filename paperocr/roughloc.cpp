@@ -18,14 +18,14 @@ bool SortByM1(const Point &p1, const Point &p2)//注意：本函数的参数的�
 int SortPoint(vector<Point> locmarks,vector<Point> &markps)
 {
 	if (0){
-		cout << "排序前" << endl;
+		cout << "排序前:" << endl;
 		for (std::vector<Point>::iterator it = locmarks.begin(); it!=locmarks.end(); it++){
 			std::cout << it->x << '\t' << it->y << std::endl;
 		}
 	}
 	sort(locmarks.begin(), locmarks.end(), SortByM1);
 	if (0){
-		cout << "排序后" << endl;
+		cout << "排序后:"<< endl;
 		for (std::vector<Point>::iterator it = locmarks.begin(); it!=locmarks.end(); it++){
 			std::cout << it->x << '\t' << it->y << std::endl;
 		}
@@ -45,8 +45,9 @@ int SortPoint(vector<Point> locmarks,vector<Point> &markps)
 	markps.push_back(p6);
 
 	if (0){
-		cout << "最终结果：（从左到右，从上到下）" << endl;
-		for (std::vector<Point>::iterator it = markps.begin(); it!=markps.end(); it++){
+		cout << "最终结果:(从左到右,从上到下)" << endl;
+		for (std::vector<Point>::iterator it = markps.begin(); it!=markps.end(); it++)
+		{
 			std::cout << it->x << '\t' << it->y << std::endl;
 		}
 	}
@@ -204,7 +205,7 @@ int roughloc(Mat src, vector<SRPart>&rougharea)
 //功能测试区
 int main_roughloc()
 {
-	string filename = "./data/img072.jpg";
+	string filename = "./samples/img072.jpg";
 	Mat src = imread(filename);
 	if (src.empty()){
 		cout << "load fail" << endl;
@@ -216,23 +217,4 @@ int main_roughloc()
 
 	return 0;
 
-	Mat demo;
-	src.copyTo(demo);
-	for (vector<SRPart>::iterator itr=rougharea.begin();itr!=rougharea.end();itr++)
-	{
-		if (itr->what=="xuehao")
-			rectangle(demo, itr->where, Scalar(255, 255, 0), 2);
-		else if(itr->what=="xuanzeti")
-			rectangle(demo, itr->where, Scalar(0, 255, 255), 2);
-		else if(itr->what=="zuguanti")
-			rectangle(demo, itr->where, Scalar(255,0, 255), 2);
-		else
-			cout<<"wrong lab"<<endl;
-		
-		//resize(demo, demo, Size(), 0.5, 0.5);
-		imshow("rougloc", demo);
-		waitKey();
-	}
-
-	return 0;
 }

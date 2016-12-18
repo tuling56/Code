@@ -380,4 +380,6 @@ int selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 
 	//关闭引擎
 	closeOCR(tess);
+
+	return 0;
 }

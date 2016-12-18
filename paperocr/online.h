@@ -1,16 +1,18 @@
 #ifndef ONLINE_H
 #define ONLINE_H
 
+#include <iostream>
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include <iostream>
+
 
 //tesseatct
 #include <baseapi.h>
 #include <basedir.h>
 //leptonica
 #include <leptonica/allheaders.h>
+
 //opencv2
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -52,7 +54,7 @@ int preciseloc(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &locs)
 int getanswer(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &answers);
 
 //*****子系统
-std::string xuehaotiProcess(cv::Mat preciseimg, std::string areaflag);
+std::string xuehaotiProcess(std::string pymodulepath, std::string qr_img_path);
 int selectProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
 int zuguantiProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
 

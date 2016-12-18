@@ -1,14 +1,14 @@
-#include<python2.7/Python.h>  
+#include<Python.h>  //<python2.7/Python.h>  
 #include<string>
 #include<iostream>
 
 using namespace std;
 
 /*	功能：python二维码识别的cpp调用
- *	输入：二维码图像
+ *	输入：二维码识别的python脚本所在目录，二维码图像位置
  *	输出：识别结果
  */
-string xuehaoti(string pymodulepath,string qr_img_path)
+string xuehaotiProcess(string pymodulepath,string qr_img_path)
 {
 
 	printf("二维码识别阶段:\n");
@@ -28,7 +28,7 @@ string xuehaoti(string pymodulepath,string qr_img_path)
 	pRet = PyEval_CallObject(pfunc, pArg);
 
 	string qr_res="";
-	int retstaus=PyArg_Parse(pRet,"s",&qr_res) //从返回值取出string类型的返回值
+	int retstaus = PyArg_Parse(pRet, "s", &qr_res); //从返回值取出string类型的返回值
 
 	Py_DECREF(pfunc);
 	Py_Finalize();
@@ -40,8 +40,11 @@ string xuehaoti(string pymodulepath,string qr_img_path)
 }
 
 //功能测试区
-int main(int argc, char const *argv[])
+int main_part_xuehao(int argc, char const *argv[])
 {
-	cout<<"cpp调用返回值:"<<xuehao("./","../samples/qr.bmp")<<endl;
+	string modulepath = "E:\\Code\\Git\\Code\\paperocr\\parts\\";
+	string xuehaopic = "E:\\Code\\Git\\Code\\paperocr\\samples\\xuehaoti.bmp";
+	cout<<"cpp调用返回值:"<<xuehaotiProcess(modulepath,xuehaopic)<<endl;
+	
 	return 0;
 }

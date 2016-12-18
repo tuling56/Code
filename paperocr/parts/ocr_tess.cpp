@@ -9,8 +9,9 @@
 ************************************************************************/
 #include "../online.h"
 
-using namespace cv;
+
 using namespace std;
+using namespace cv;
 using namespace tesseract;
 
 #pragma  comment(lib,"libtesseract302d.lib")
@@ -64,7 +65,7 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 			cout << "\t" << char_whitelist << endl;
 	}
 	t = ((double)getTickCount() - t)/getTickFrequency();  
-	cout<<"初始化引擎耗时："<<t<<"秒"<<endl;
+	cout<<"init cosume time:"<<t<<"(s)"<<endl;
 
 
 	//整体识别阶段
@@ -83,14 +84,14 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 	}
 	
 	if (output.size()==0){
-		cout << "整体的识别结果是：[空]"<<endl;
+		cout << "whole OCR result：[]"<<endl;
 		tess.Clear();
 		cout << "---------------[END]------------------" << endl;
 		return 0;
 	}
 	else{
-		cout << "整体的识别结果是(置信率："<<conf<<")：" << output << endl;
-		cout << "详情如下：>>>" << endl;
+		cout << "whole OCR result(confidence:"<<conf<<"):" << output << endl;
+		cout << "details as follow:>>>" << endl;
 	}
 
 	//单区域多识别项问题
@@ -142,13 +143,15 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 		Point2d textloc = component_rects[j].tl() - Point(1, 1);
 		textloc.x = textloc.x > 0 ? textloc.x : 0;
 		textloc.y = textloc.y > 0 ? textloc.y : 0;
-		cout <<"高精度识别的元素："<<component_texts[j] <<"\t置信率："<<component_confidences[j]<<endl;
+		cout << "high confidence elem:" << component_texts[j];
+		cout << " confidence:" << component_confidences[j] << endl;
 		//putText(src, component_texts[j], textloc, FONT_HERSHEY_SIMPLEX, scale_font, Scalar(255, 0, 0), (int)(2 * scale_font));
 	}
 	tess.Clear();	
 	
 	t = ((double)getTickCount() - t) / getTickFrequency();
-	cout << "识别耗时：" << t << "秒" << endl;
+	cout << " ocr cost time:" << t;
+	cout << "(s)" << endl;
 	cout << "---------------[END]------------------" << endl;
 
 	if (0){
@@ -194,7 +197,7 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 			cout << "\t" << char_whitelist << endl;
 	}
 	t = ((double)getTickCount() - t) / getTickFrequency();
-	cout << "初始化引擎耗时：" << t << "秒" << endl;
+	cout << "Init consume time:" << t << "(s)" << endl;
 
 	for (vector<Mat>::iterator it = srcs.begin(); it != srcs.end();it++)
 	{
@@ -227,13 +230,13 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 		}
 
 		if (output.size() == 0){
-			cout << "整体的识别结果是：[空]" << endl;
+			cout << "whole OCR result：[]" << endl;
 			cout << "---------------[END]------------------" << endl;
 			continue;
 		}
 		
-		cout << "整体的识别结果是：" << output << endl;
-		cout << "详情如下：>>>" << endl;
+		cout << "whole OCR result:" << output << endl;
+		cout << "details as follow:>>>" << endl;
 		
 		vector<Rect> component_rects;
 		vector<string> component_texts;
@@ -282,7 +285,7 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 			Point2d textloc = component_rects[j].tl() - Point(1, 1);
 			textloc.x = textloc.x > 0 ? textloc.x : 0;
 			textloc.y = textloc.y > 0 ? textloc.y : 0;
-			cout << "高精度识别的元素：" << component_texts[j] << "\t置信率：" << component_confidences[j] << endl;
+			cout << "high confidence elem:" << component_texts[j] << "\tconfidence:" << component_confidences[j] << endl;
 			//putText(src, component_texts[j], textloc, FONT_HERSHEY_SIMPLEX, scale_font, Scalar(255, 0, 0), (int)(2 * scale_font));
 		}
 		
@@ -293,7 +296,7 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 		detect_confidences.push_back(detect_confidence);
 
 		t = ((double)getTickCount() - t) / getTickFrequency();
-		cout << "识别耗时：" << t << "秒" << endl;
+		cout << "cost time:" << t << "(s)" << endl;
 		cout << "---------------[END]------------------" << endl;
 		
 		if (0){
@@ -345,7 +348,7 @@ int initOCR(tesseract::TessBaseAPI &tess)
 			cout << "\t" << char_whitelist << endl;
 	}
 	t = ((double)getTickCount() - t) / getTickFrequency();
-	cout << "初始化引擎耗时：" << t << "秒" << endl;
+	cout << "init cost time:" << t << "(s)" << endl;
 
 	return 0;
 
@@ -378,8 +381,8 @@ int OCR(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vector<st
 		return 0;
 	}
 	else{
-		cout << "整体的识别结果是(置信率：" << conf << ")：" << output << endl;
-		cout << "详情如下：>>>" << endl;
+		cout << "whole OCR result(confidence:" << conf << "):" << output << endl;
+		cout << "detail as follow：>>>" << endl;
 	}
 
 	//整体识别的细分（）
@@ -431,11 +434,11 @@ int OCR(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vector<st
 		Point2d textloc = component_rects[j].tl() - Point(1, 1);
 		textloc.x = textloc.x > 0 ? textloc.x : 0;
 		textloc.y = textloc.y > 0 ? textloc.y : 0;
-		cout << "高精度识别的元素：" << component_texts[j] << "\t置信率：" << component_confidences[j] << endl;
+		cout << "high confidence elem:" << component_texts[j] << "\tconfidence:" << component_confidences[j] << endl;
 		//putText(src, component_texts[j], textloc, FONT_HERSHEY_SIMPLEX, scale_font, Scalar(255, 0, 0), (int)(2 * scale_font));
 	}
 	t = ((double)getTickCount() - t) / getTickFrequency();
-	cout << "识别耗时：" << t << "秒" << endl;
+	cout << "cost time:" << t << "(s)" << endl;
 	cout << "---------------[END]------------------" << endl;
 
 	if (0){
@@ -455,4 +458,11 @@ int closeOCR(tesseract::TessBaseAPI &tess)
 	tess.Clear();
 	tess.End();
 	return 0;
+}
+
+//功能测试区
+int main_ocr_tess()
+{
+	return 0;
+
 }

@@ -44,49 +44,58 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 		Mat demo;
 		roughimg.copyTo(demo);
 		findContours(floodimg, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-		drawContours(demo, contours, -1, Scalar(255, 255, 0), 1);
+		drawContours(demo, contours, -1, Scalar(0, 0, 255), 1);
 
 		//cout<<"lunkuo filter"<<endl;
 		int downarea = 250;
-		int uparea = floodimg.rows*floodimg.cols / 3;
-		int num = 0;
+		int uparea = floodimg.rows*floodimg.cols / 5;
+		int maxarea = 0;
+		int maxcontour = 0;
 		vector<vector<Point> > approx;
 		for (size_t i = 0; i < contours.size(); i++)
 		{
-			float contour_area = contourArea(contours[i]);
-			//approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true)*0.02, true);
-			//if (fabs(contourArea(Mat(contours[i]))) > 10 && isContourConvex(Mat(contours[i])))
+			float contour_area = contourArea(contours[i]); //轮廓的面积的计算规则
+			Rect box = boundingRect(Mat(contours[i]));
+			float ratio = min(float(box.width) / box.height, float(box.height) / box.width);
+			if (contour_area>downarea && contour_area < uparea && ratio>0.9)
 			{
-				float radius;
-				Point2f center;
-				Rect brect=boundingRect(Mat(contours[i]));
-			
-				float rect_area = brect.width*brect.height;
-				float ratio = rect_area / contour_area;
-				if (ratio > 1.2&&ratio<2)
-				{
-					//将这个轮廓的外接矩形保存
-					Mat qr=roughimg(brect);
-					imshow("now arc",qr);
-					waitKey();
-
-					//外框学号二维码纳入精确定位结果
-					SLocAnswer part_xuehao;
-					ostringstream s1;
-					s1 << areaflag << "_" << num++;
-					part_xuehao.what = s1.str();
-					part_xuehao.where = brect;
-					precise_boxes.push_back(part_xuehao);
-				}
-				
+				maxarea = contour_area>maxarea ? contour_area : maxarea;
+				maxcontour = i;
 			}
+		}
+
+		//最大核验
+		{
+			float radius;
+			Point2f center;
+			Rect brect = boundingRect(Mat(contours[maxcontour]));
+			cv::rectangle(demo, brect, Scalar(0, 255, 0), 2,8);
+
+			float rect_area = brect.width*brect.height;
+			float ratio = rect_area / maxarea;
+			if (ratio > 1 &&ratio < 1.2)
+			{
+				//将这个轮廓的外接矩形保存
+				Mat qr = roughimg(brect);
+				copyMakeBorder(qr, qr, 5, 5, 5, 5, BORDER_CONSTANT, Scalar(255));
+				//imshow("now arc", qr);
+				//waitKey();
+
+				//外框学号二维码纳入精确定位结果
+				SLocAnswer part_xuehao;
+				ostringstream s1;
+				part_xuehao.what = areaflag;
+				part_xuehao.where = brect;
+				part_xuehao.pic = qr;
+				precise_boxes.push_back(part_xuehao);
+			}
+
 		}
 	}
 
 	//选择题的精确定位已解决
 	if( areaflag=="xuanzeti" )
 	{
-
 		Mat pyr,demo,timg, gray;
 		roughimg.copyTo(demo);
 
@@ -97,7 +106,6 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 		vector<vector<Point> > squares;
 	    vector<vector<Point> > contours;
 
-		int num = 1;
 		int thresh = 50, N = 1;
 	    for( int c = 0; c < 1; c++ )
 	    {
@@ -143,21 +151,19 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 						if (maxCosine < 0.2){
 							squares.push_back(approx); 
 
-							//精确定位在粗定位上进行了12像素的扩张
+							//精确定位在粗定位上进行了12像素的扩张(避免矩形扭曲带来的部分截断)
 							Rect expandbox=Rect(box.tl() + Point(-6, -6), box.br()+ Point(6, 6));
-
 							RNG rng = theRNG();
 							Scalar newVal(rng(256), rng(256), rng(256));
 							rectangle(demo, expandbox,Scalar(0,255,0), 2, CV_AA);
 							rectangle(demo, box, newVal, 1, CV_AA);		
 
 							//选择题框纳入精定位结果
-							SLocAnswer partselect;
-							ostringstream s1;
-							s1 << areaflag << "_" << num++;
-							partselect.what = s1.str();
-							partselect.where = expandbox;
-							precise_boxes.push_back(partselect);
+							SLocAnswer part_select;
+							part_select.what = areaflag;
+							part_select.where = expandbox;
+							part_select.pic = roughimg(expandbox);
+							precise_boxes.push_back(part_select);
 						}	
 	                }
 	            }
@@ -205,17 +211,22 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 		vector<Rect> floodRects;
 		int num=0;
 		RNG rng = theRNG();
-		for (int y = 0; y < roughimg.rows; y++)
+		for (int y = 0; y < roughimg.rows; y=y+3)
 		{
-			for (int x = 0; x < roughimg.cols; x++)
+			for (int x = 0; x < roughimg.cols; x=x+3)
 			{
 				if (mask.at<uchar>(y + 1, x + 1) == 0)
 				{
 					Scalar newVal(rng(256), rng(256), rng(256));
   					Rect floodRect;
- 					int area = floodFill(floodimg, mask, Point(x, y), newVal, &floodRect, colorDiff, colorDiff,flag);  				//漫水区域面积
- 					float  wrap_ratio = min(float(floodRect.width) / floodRect.height, float(floodRect.height) / floodRect.width);  //漫水区域的外接矩形形状
- 					float  occupation_ratio = float(area) / float(floodRect.area());												//漫水占比=漫水区域的面积/外接矩形的面积
+					//漫水区域面积
+ 					int area = floodFill(floodimg, mask, Point(x, y), newVal, &floodRect, colorDiff, colorDiff,flag); 
+					//漫水区域的外接矩形形状
+ 					float  wrap_ratio = min(float(floodRect.width) / floodRect.height, float(floodRect.height) / floodRect.width);
+					//漫水占比=漫水区域的面积/外接矩形的面积
+ 					float  occupation_ratio = float(area) / float(floodRect.area());
+
+					imgbak.copyTo(now, mask);
  					
  					//过滤条件
   					if (area<downarea || area>uparea)
@@ -228,19 +239,24 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
  					floodRatio.push_back(wrap_ratio);
  					floodRects.push_back(floodRect);
  
- 					imgbak.copyTo(now, mask);
+ 					//imgbak.copyTo(now, mask);
 
  					//主观题纳入
+					rectangle(roughimg, floodRect, Scalar(0, 0, 255), 2, 8);
  					SLocAnswer part_zuguan;
 					ostringstream s1;
 					s1 << areaflag<<"_" << num++;
 					part_zuguan.what = s1.str();
 					part_zuguan.where = floodRect;
+					part_zuguan.pic = roughimg(floodRect);
 					precise_boxes.push_back(part_zuguan);
 
 				}
 			}
 		}
+
+		imshow("demo", roughimg);
+		waitKey();
 	}
 
 	return 0;
@@ -248,9 +264,9 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 
 
 //功能测试区
-int main()
+int main_preciseloc()
 {
-	string filename = "C:\\Users\\xl\\Desktop\\Code\\paperocr\\samples\\xuehaoti.bmp";
+	string filename = "E:\\Code\\Git\\Code\\paperocr\\samples\\xuanzeti.bmp";
 	Mat src = imread(filename);
 	if (src.empty()){
 		cout << "load fail" << endl;
@@ -258,7 +274,7 @@ int main()
 	}
 
 	vector<SLocAnswer> precisearea;
-	preciseloc(src,"xuehaoti",precisearea);
+	preciseloc(src,"xuanzeti",precisearea);
 
 	return 0;
 
