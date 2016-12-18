@@ -1,4 +1,5 @@
-#include<Python.h>  //<python2.7/Python.h>  
+//#include<Python.h>  
+#include<python2.7/Python.h>  
 #include<string>
 #include<iostream>
 
@@ -14,8 +15,9 @@ string xuehaotiProcess(string pymodulepath,string qr_img_path)
 	printf("二维码识别阶段:\n");
 	Py_Initialize();
 	PyRun_SimpleString("import sys");
-	//PyRun_SimpleString("sys.path.append('./online')");
-	PyRun_SimpleString(pymodulepath.c_str());
+    
+    string importstr="sys.path.append('"+pymodulepath+"')";	
+    PyRun_SimpleString(importstr.c_str());
 
 	PyObject *pMode = NULL;
 	PyObject *pfunc = NULL;
@@ -27,24 +29,27 @@ string xuehaotiProcess(string pymodulepath,string qr_img_path)
 	pArg = Py_BuildValue("(s)", qr_img_path.c_str());  //传进去二维码图像文件
 	pRet = PyEval_CallObject(pfunc, pArg);
 
-	string qr_res="";
+	char* qr_res=NULL;
 	int retstaus = PyArg_Parse(pRet, "s", &qr_res); //从返回值取出string类型的返回值
+    //printf("识别结果:%s\n",qr_res); 
 
 	Py_DECREF(pfunc);
 	Py_Finalize();
 
-	if(retstaus==0)
-		return qr_res;	
+	if(retstaus!=0){
+        string res=qr_res;
+		return res ;	
+    }
 	else
 		return "error";
 }
 
 //功能测试区
-int main_part_xuehao(int argc, char const *argv[])
+int main(int argc, char const *argv[])
 {
-	string modulepath = "E:\\Code\\Git\\Code\\paperocr\\parts\\";
-	string xuehaopic = "E:\\Code\\Git\\Code\\paperocr\\samples\\xuehaoti.bmp";
-	cout<<"cpp调用返回值:"<<xuehaotiProcess(modulepath,xuehaopic)<<endl;
+	string modulepath= "/home/roo/Documents/pythoncpp/pythonocr_git/parts";
+	string xuehaopic = "/home/roo/Documents/pythoncpp/pythonocr_git/samples/qr.bmp";
+    cout<<"cpp调用返回值:"<<xuehaotiProcess(modulepath,xuehaopic)<<endl;
 	
 	return 0;
 }
