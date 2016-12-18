@@ -45,20 +45,24 @@ int areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs)
 int getanswer(Mat preciseimg,string areaflag,vector<SLocAnswer> &answerloc)
 {
 	
+	//前置预处理程序
 	int spatialRad = 20;
 	int colorRad = 20;
 	int maxPyrLevel = 2;
     
 	Mat pyres;
 	//pyrMeanShiftFiltering( preciseimg, pyres, spatialRad, colorRad, maxPyrLevel);
-    areaDecomposeOCR(preciseimg,areaflag,answerloc);
+    
+	
+	//调用各个模块的识别
+	areaDecomposeOCR(preciseimg,areaflag,answerloc);
 
 	return 0;
 }
 
 
 //功能测试区
-int main()
+int main_getanswer()
 {
 	string filename = "E:\\Code\\Git\\Code\\paperocr\\samples\\zuguan1.bmp";
 	Mat src = imread(filename);

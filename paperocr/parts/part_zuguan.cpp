@@ -4,12 +4,10 @@ using namespace cv;
 using namespace std;
 
 
-extern bool SortByX(const Rect &p1, const Rect &p2);
-
 
 /* 主观题处理
  * 输入：精定位图像，区域标示（例如：zguanti_1）
- * 输出：位置和识别结果
+ * 输出：（对多数字的支持）位置和识别结果
  */
 int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 {
@@ -78,7 +76,7 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 	initOCR(tess);
 
 	//对主观题进行位置左右划分
-	sort(floodRects.begin(), floodRects.end(), SortByX);
+	//sort(floodRects.begin(), floodRects.end(), SortByX);
 
 	//step2:识别和保存
 	char s[50];
@@ -120,4 +118,26 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 
 	//step3:关闭引擎
 	closeOCR(tess);
+}
+
+
+
+//功能测试区
+int main()
+{
+
+	//string filename = "./samples/zuguan_1.bmp";
+	string filename = "E:\\Code\\Git\\Code\\paperocr\\samples\\zuguan_1.bmp";
+	Mat src = imread(filename);
+	if (src.empty()){
+		cout << "load fail" << endl;
+		return 0;
+	}
+
+	vector<SLocAnswer> locs;
+	zuguantiProcess(src, "zuguan_1",locs);
+
+	return 0;
+
+
 }

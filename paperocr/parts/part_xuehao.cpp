@@ -1,5 +1,5 @@
-//#include<Python.h>  
-#include<python2.7/Python.h>  
+#include<Python.h>  
+//#include<python2.7/Python.h>  
 #include<string>
 #include<iostream>
 
@@ -45,6 +45,7 @@ string xuehaotiProcess(string pymodulepath,string qr_img_path)
 }
 
 //功能测试区
+/*
 int main(int argc, char const *argv[])
 {
 	string modulepath= "/home/roo/Documents/pythoncpp/pythonocr_git/parts";
@@ -53,3 +54,4 @@ int main(int argc, char const *argv[])
 	
 	return 0;
 }
+*/
