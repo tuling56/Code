@@ -2,12 +2,15 @@
 * Copyright(c) 2015 tuling56
 *
 * File:	saverults.cpp
-* Brief:将结果保存为xml文件,txt文件及识别和定位的结果
+* Brief:将结果保存为json文件,待训练图像按识别结果分类保存
 * Status:
 ************************************************************************/
+#include "online.h"
 #include <sstream>
 #include <fstream>
-#include "online.h"
+#include <unistd.h>
+#include <sys/stat.h>
+#include <dirent.h>
 
 using namespace cv;
 using namespace std;
@@ -42,7 +45,11 @@ int savetotrain(string outpath, vector<SLocAnswer> locanswers)
 {
 	for (vector<SLocAnswer>::iterator it = locanswers.begin(); it != locanswers.end(); it++)
 	{
-		string filename = outpath + it->what + ".png";
+		//创建子目录
+		if (NULL == opendir(it->what.c_str())){
+			mkdir(resTrainpath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		}
+		string filename = outpath +"/"+it->what+"/"+it->what + ".png";
 		imwrite(filename, it->pic);
 	}
 

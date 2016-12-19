@@ -22,7 +22,7 @@ int areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs)
 	else if (areaflag=="xuanzeti"){
 		selectProcess(preciseimg, areaflag, locs);
 	}
-	else if (areaflag=="zuguanti")	{
+	else if (areaflag.find("zuguanti")!=string::npos){
 		//cout << "解答题区" << endl;
 		zuguantiProcess(preciseimg, areaflag, locs); //处理的是每个主观题
 	}

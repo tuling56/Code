@@ -21,7 +21,7 @@ string  singleproc(string filename,string resTrainpath)
 	string fname=fnameExt.substr(0,fnameExt.rfind("."));
 	cout<<"文件名:"<<fnameExt<<endl;
 	
-    //输出以作训练的图像
+    //输出以作训练的图像的父目录
 	if (NULL==opendir(resTrainpath.c_str())){
 		mkdir(resTrainpath.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	}
@@ -48,7 +48,7 @@ string  singleproc(string filename,string resTrainpath)
 		
 		//对精定位的结果进行识别
 		if (precise_boxnum == 0){
-			getanswer(rough, areaflag, loc_answer);//如果没到定位到的精确区域，则将整个粗定位作为精确定位进行识别
+			getanswer(rough, areaflag, loc_answer);//如果没定位到的精确区域，则将整个粗定位作为精确定位进行识别
 			imwrite(output + "_ocr.png", rough);
 			continue;
 		}
