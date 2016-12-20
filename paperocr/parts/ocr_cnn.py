@@ -18,7 +18,7 @@ sys.setdefaultencoding('utf-8')
 
 
 '''
-	若给的是图片数据，先向量化
+	若给的是图片路径，先加载并向量化,//这部分要修改成直接传递的是图像数据
 '''
 HAS_CV=False
 try:
@@ -57,6 +57,7 @@ from tensorflow.python.platform import gfile # 图模型文件
 
 def cnn_predict(vsample,modulename,whats):
 	print "\033[1;31mload model>>>\033[0m"
+	prev_char=""
 	with tf.Session() as sess:
 		new_saver = tf.train.import_meta_graph(modulemname+'.meta')			#恢复图模型
 		new_saver.restore(sess,modulename )									#恢复数据
@@ -72,10 +73,16 @@ def cnn_predict(vsample,modulename,whats):
 		print "\033[1;31msingle predict\033[0m"
 		test=np.array(vsample)
 		prev=sess.run(predict,feed_dict={x: test, y_: mark, keep_prob: 1.0})
-		print u"[prev]:",chr(prev.tolist().index(1)+ord(whats[0]))
-
+		prev_char= chr(prev.tolist().index(1)+ord(whats[0]))
+		print u"[prev]:",prev_char
 
 	print "\033[1;31mpredict done!\033[0m"
+
+	if prev_char:
+		return prev_char;
+	else
+		return "error"
+
 
 
 '''
@@ -83,10 +90,9 @@ def cnn_predict(vsample,modulename,whats):
 '''
 def cnn_ocr(pic,modulename,whats):
 	vsample=processpic(pic)
-	#modulename="./modules/module_num"
-	#whats=list('0123456789')
-	cnn_predict(vsample,modulename,whats)
-
+	whats=list(whats)
+	prev_res=cnn_predict(vsample,modulename,whats)
+	return prev_res;
 
 
 if __name__ == "__main__":
@@ -95,6 +101,6 @@ if __name__ == "__main__":
 	vsample=processpic(pic)
 
 	# CNN识别
-	modulename="./modules/module_num"
+	modulename="./models/model_0-9"
 	whats=list('0123456789')
 	cnn_predict(vsample,modulename,whats)

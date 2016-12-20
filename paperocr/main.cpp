@@ -63,12 +63,11 @@ string  singleproc(string filename,string resTrainpath)
 	}
 
 
-
 	//结果文件保存以再训练
 	savetotrain(resTrainpath, loc_answer);
-	
+	string fres=savetojson(std::string filename, std::vector<SLocAnswer > locanswers);
 
-	return 0;
+	return fres;
 }
 
 

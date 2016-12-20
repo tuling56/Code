@@ -146,7 +146,8 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			string answervalue;
 			vector<string> answercontent;
 			vector<float> answerconfidences;
-			OCR(tess, it->pic, answervalue,conf,answercontent, answerconfidences);
+			tess_ocr(tess, it->pic, answervalue,conf,answercontent, answerconfidences);
+			//string cnn_res=cnn_ocr(picf,cnnpypath,modulefile,whats);
 			it->content = answervalue;
 			it->confidences = answerconfidences;
 	}

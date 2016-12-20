@@ -7,7 +7,7 @@ using namespace std;
 
 /*	功能：python二维码识别的cpp调用
  *	输入：二维码识别的python脚本所在目录，二维码图像位置
- *	输出：识别结果
+ *	输出：识别的二维码结果（json数据格式）
  */
 string xuehaotiProcess(string pymodulepath,string qr_img_path)
 {
@@ -26,7 +26,7 @@ string xuehaotiProcess(string pymodulepath,string qr_img_path)
 	
 	pMode = PyImport_ImportModule("zbar_xuehao_scan");
 	pfunc = PyObject_GetAttrString(pMode, "qr_scan");
-	pArg = Py_BuildValue("(s)", qr_img_path.c_str());  //传进去二维码图像文件
+	pArg = Py_BuildValue("(s)", qr_img_path.c_str());  //传进去二维码图像文件路径
 	pRet = PyEval_CallObject(pfunc, pArg);
 
 	char* qr_res=NULL;

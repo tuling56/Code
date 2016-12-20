@@ -11,30 +11,40 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <jsoncpp/json/json.h>
 
 using namespace cv;
 using namespace std;
+using namespace Json;
 
 /*
  *	功能：将一个学生试卷的定位和识别结果写入json文件,交互接口
  *	输入:stuNum（二维码识别结果）,vector<SLocAnswer> locanswers (选择题每个部分和主观题每个部分)
  * 
  */
-int savetojson(string stuNum, vector<SLocAnswer> locanswers)
+string savetojson(string stuNum, vector<SLocAnswer> locanswers)
 {
 	string resfile = stuNum + "_tess.json";
 	ofstream ocrres(resfile.c_str());
+
+	Json::Value paper_res;
+	paper_res["image_path"]="/data/img/xxx.jpg";
+	paper_res["qr_code"]="paper_id=xxxxxxx&page_num=1"; 
+	paper_res["student_id"]="20161202";
+
+	//涵盖选择题和主观题
 	for (vector<SLocAnswer>::iterator it = locanswers.begin(); it != locanswers.end(); it++)
 	{
-		ocrres << it->what << ":" << it->content << endl;
+		paper_res[it->what]=it->content;
 	}
 
+	Json::StyledWriter styled_writer;
+	ocrres<<styled_writer(paper_res);
 	ocrres.close();
 
-	cout<<"识别结果文件保存在:"<<resfile<<endl;
-	return 0;
+	//返回识别结果
+	return styled_writer.write(paper_res);
 }
-
 
 /*
  *	功能：保存处理后的答题区域,每个答题域一个图像，用于训练样本收集
@@ -53,6 +63,5 @@ int savetotrain(string outpath, vector<SLocAnswer> locanswers)
 		imwrite(filename, it->pic);
 	}
 
-	cout<<"答题域文件保存在:"<<outpath<<endl;
 	return 0;
 }

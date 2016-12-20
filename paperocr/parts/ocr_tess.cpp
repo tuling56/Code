@@ -357,7 +357,7 @@ int initOCR(tesseract::TessBaseAPI &tess)
 /* step2:识别模块
 *
 */
-int OCR(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vector<string> &detect_words, vector<float> & detect_confidences)
+int tess_ocr(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vector<string> &detect_words, vector<float> & detect_confidences)
 {
 	//识别阶段
 	double t = (double)getTickCount();

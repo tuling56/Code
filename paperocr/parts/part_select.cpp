@@ -344,7 +344,8 @@ int selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			int conf=0;
 			vector<string> tihaocontent;
 			vector<float> tihaoconfidences;
-			OCR(tess, tihaon, tihaovalue,conf,tihaocontent, tihaoconfidences);
+			tess_ocr(tess, tihaon, tihaovalue,conf,tihaocontent, tihaoconfidences);
+			//string tihao_cnn_res=cnn_ocr(picf,cnnpypath,modulefile,whats);
 			now_tihao.pic = tihao;
 			now_tihao.content = tihaovalue;
 			now_tihao.confidences = tihaoconfidences;
@@ -352,7 +353,8 @@ int selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			string answervalue;
 			vector<string> answercontent;
 			vector<float> answerconfidences;
-			OCR(tess, answern, answervalue,conf,answercontent, answerconfidences);
+			tess_ocr(tess, answern, answervalue,conf,answercontent, answerconfidences);
+			//string answer_cnn_res=cnn_ocr(picf,cnnpypath,modulefile,whats);
 			now_answer.pic = answer;
 			now_answer.content = answervalue;
 			now_answer.confidences = answerconfidences;

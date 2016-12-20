@@ -60,7 +60,7 @@ int zuguantiProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAn
 
 
 //识别结果保存和再训练
-int savetojson(std::string stuNum, std::vector<SLocAnswer > locanswers);
+std::string savetojson(std::string filename, std::vector<SLocAnswer > locanswers);
 int savetotrain(std::string outpath, std::vector<SLocAnswer > locanswers);
 
 
@@ -71,7 +71,7 @@ int ocranswer(cv::Mat src, std::string & output, std::vector<std::string> &detec
 int ocranswer_seqs(std::vector<cv::Mat> srcs, std::vector<std::string> & outputs, std::vector<std::vector<std::string> > &detect_chars, std::vector<std::vector<float> > & detect_confidences);
 
 int initOCR(tesseract::TessBaseAPI &tess);
-int OCR(tesseract::TessBaseAPI &tess, cv::Mat src,std::string&output,int &conf,std::vector<std::string> &detect_words, std::vector<float> & detect_confidences);
+int tess_ocr(tesseract::TessBaseAPI &tess, cv::Mat src,std::string&output,int &conf,std::vector<std::string> &detect_words, std::vector<float> & detect_confidences);
 int closeOCR(tesseract::TessBaseAPI &tess);
 
 /*part2:cnn*/
