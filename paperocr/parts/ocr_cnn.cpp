@@ -13,10 +13,10 @@
 using namespace std;
 
 /*	功能：python cnn识别的cpp调用
- *	输入：python cnn模块的路径，分割和定位后的图像路径（和待训练结果保存的异同？）
+ *	输入：python 图像路径,cnn模块的路径,模型文件路径，要识别的内容的类型
  *	输出：识别结果
  */
-int cnn_ocr(string cnnpypath,string vdatapath)
+string  cnn_ocr(string picpath,string cnnpypath,string modulepath,string whats)
 {
 	printf("CNN识别阶段:\n");
 	Py_Initialize();
@@ -26,24 +26,25 @@ int cnn_ocr(string cnnpypath,string vdatapath)
 	PyObject *pMode = NULL;
 	PyObject *pfunc = NULL;
 	PyObject *pArg = NULL;
-	
-	printf("\tstep1:图像向量化....\n");
-	pMode = PyImport_ImportModule("img_proc");
-	pfunc = PyObject_GetAttrString(pMode, "img_proc");
-	pArg = Py_BuildValue("(s)", vdatapath.c_str());  
-	PyEval_CallObject(pfunc, pArg);
-	Py_DECREF(pfunc);
+	PyObject *pRet = NULL;
 
-	
-	printf("\tstep2:cnn识别....\n");
 	pMode = PyImport_ImportModule("cnn_ocr");
 	pfunc = PyObject_GetAttrString(pMode, "cnn_ocr");
-	PyEval_CallObject(pfunc,pArg);
-	Py_DECREF(pfunc);
+	pArg = Py_BuildValue("sss", picpath.c_str(),modulepath.c_str(),whats.c_str());
+	pRet = PyEval_CallObject(pfunc,pArg);
 
+	//获取返回结果
+	char * cnn_res=NULL;
+	int retstatus=PyArg_Parse(pRet,"s",&cnn_res);
+	Py_DECREF(pfunc);
 	Py_Finalize();
-	
-	return 0;
+
+	if (retstatus!=0){
+		string res=cnn_res;
+		return res;
+	}
+	else
+		return "error";	
 }
 
 //测试

@@ -27,12 +27,11 @@ E-->K[ocr_tess.cpp]
 G-->K
 K-->eng.traindata
 
-H-->T[cnn_tensor_class.py]
+H-->T[ocr_cnn.py]
 T-->Model_ABCD
 T-->Model_0-9
 
 F-->zbar_xuehao_scan.cpp
-
 ```
 
 

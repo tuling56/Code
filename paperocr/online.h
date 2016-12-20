@@ -75,7 +75,7 @@ int OCR(tesseract::TessBaseAPI &tess, cv::Mat src,std::string&output,int &conf,s
 int closeOCR(tesseract::TessBaseAPI &tess);
 
 /*part2:cnn*/
-int cnn_ocr(std::string projectpath);
+std::string cnn_ocr(std::string picpath,std::string cnnpypath,std::string modulepath,std::string whats);
 
 
 #endif
