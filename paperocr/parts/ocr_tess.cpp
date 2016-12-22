@@ -159,6 +159,8 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 		waitKey();
 	}
 
+	return 0;
+
 }
 
 

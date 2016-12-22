@@ -29,6 +29,7 @@ except Exception,e:
     print "no cv model,use PIL instead"
     from PIL import Image
 
+# 这部分可以放在c++程序中处理，从而避开文件的保存环节
 def processpic(picname):
     if HAS_CV:
         img=cv2.imread(picname,0)

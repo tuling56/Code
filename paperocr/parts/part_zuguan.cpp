@@ -161,7 +161,7 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 
 
 //功能测试区
-int main()
+int main_partzuguan()
 {
 
 	//string filename = "./samples/zuguan_1.bmp";
