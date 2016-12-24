@@ -9,14 +9,28 @@
 #include "../common.h"
 #include<python2.7/Python.h>  
 
+using namespace cv;
 using namespace std;
 
 /*	功能：python cnn识别的cpp调用
- *	输入：Mat 图像,cnn模块的路径,模型文件路径，要识别的内容的类型
+ *	输入：Mat 图像,要识别的内容序列
  *	输出：识别结果
  */
-string  cnn_ocr(cv::Mat src,string cnnpypath,string modulepath,string whats)
+string  cnn_ocr(cv::Mat src,string whats)
 {
+
+	//当前路径获取，用于确定模块路径的位置
+	char *curpath_tmp;
+	curpath_tmp = (char *)malloc(60);
+	getcwd(curpath_tmp, 60);
+	printf("当前执行程序路径:%s\n", curpath_tmp);
+	string curpath = curpath_tmp;
+
+	string cnnpypath = curpath + "/parts/";
+	string modulepath = curpath + "/parts/models";
+    cout<<"cnnpypath:"<<cnnpypath<<endl;
+    cout<<"modulepath:"<<modulepath<<endl;
+
 	string picvecstr = mat2vecstr(src);
 
 	printf("CNN识别阶段:\n");
@@ -49,10 +63,15 @@ string  cnn_ocr(cv::Mat src,string cnnpypath,string modulepath,string whats)
 }
 
 //测试
-/*int main()
+int main()
 {
-	string propath="/home/roo/Documents/pythoncpp/paperocr";
-	cnn_ocr(propath);
+	Mat src = imread("samples/1.bmp", 0);
+	if (src.empty()){
+		cout << "load fail" << endl;
+		return 0;
+	}
+	cnn_ocr(src,"0123456789");
+
 	return 0;
 
-}*/
+}
