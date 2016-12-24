@@ -17,12 +17,19 @@ string  singleproc(string filename,string resTrainpath)
 		return 0;
 	}
 
+	//获取当前指向程序的路径(主要用于确定临时文件的存储)
+	char *curpath;
+	curpath = (char *)malloc(60);
+	getcwd(curpath, 60);
+	printf("当前执行程序路径:%s", curpath);
+
+
     //输入文件
     string fnameExt=filename.substr(filename.rfind("/")+1);
 	string fname=fnameExt.substr(0,fnameExt.rfind("."));
 	cout<<"文件名:"<<fnameExt<<endl;
 	
-    //以作训练的图像的父目录
+    //存储训练的图像的父目录
 	if (NULL==opendir(resTrainpath.c_str())){
 		mkdir(resTrainpath.c_str(),S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	}
@@ -75,7 +82,7 @@ string  singleproc(string filename,string resTrainpath)
 
 	//结果文件保存以再训练
 	savetotrain(resTrainpath,loc_answer);
-	string fres=savetojson(filename,loc_answer);
+	string fres=savetojson(filename,xuehao,loc_answer);
 
 	return fres;
 }

@@ -1,9 +1,10 @@
 #include "common.h"
+#include <stdlib.h>
 
 using namespace cv;
 using namespace std;
 
-
+//matÍ¼ÏñÏòÁ¿»¯
 string mat2vecstr(Mat image)
 {
 	if (image.channels() == 3){
@@ -19,16 +20,20 @@ string mat2vecstr(Mat image)
 	image = (image-min) / (max - 50);
 	*/
 	threshold(image, image, 50, 1, THRESH_BINARY_INV);
+
+	char tmp[6];
+
 	ostringstream res;
 	res << "[";
 	for (int i = 0; i < image.rows; i++)
 	{
 		for (int j = 0; j < image.cols; j++)
 		{
+			sprintf(tmp, "%d", image.at<uchar>(j, i));
 			if (i == image.rows - 1 && j == image.cols - 1)
-				res << to_string(image.at<uchar>(j, i));
+				res << tmp;
 			else
-				res << to_string(image.at<uchar>(j, i)) << ",";
+				res << tmp << ",";
 		}
 	}
 	res << "]";

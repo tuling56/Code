@@ -16,9 +16,7 @@ string areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs
 	
 	if (areaflag=="xuehao")	{			//调用python接口返回学号
 		//cout << "学号区" << endl;
-		string xuehaopath = "";			//学号模块的路径
-		string xuehaoimg = "";			//学号图像
-		string xuehaoinfo = xuehaotiProcess(xuehaopath, xuehaoimg);
+		string xuehaoinfo = xuehaotiProcess(preciseimg);
 		return xuehaoinfo;
 	}
 	else if (areaflag=="xuanzeti"){

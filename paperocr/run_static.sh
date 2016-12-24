@@ -17,8 +17,8 @@ fi
 #### 编译(只选择依赖的库，部署使用)
 if [ "$compile" == "-c" ];then
 	echo -e "\e[1;31m编译中....\e[0m"
-	#gccx="g++ -w -g -o main  main.cpp getanswer.cpp preciseloc.cpp roughloc.cpp  parts/ocr/ocr_cnn.cpp parts/ocr/ocr_tess.cpp parts/select.cpp tools/saveresult.cpp  `pkg-config --cflags opencv` `pkg-config --cflags tesseract`  `pkg-config --libs opencv` `pkg-config --libs tesseract` `pkg-config --libs tinyxml` -lpython2.7"
-	gccx="g++ -w -o main main.cpp getanswer.cpp preciseloc.cpp roughloc.cpp parts/ocr/ocr_cnn.cpp parts/ocr/ocr_tess.cpp parts/select.cpp tools/saveresult.cpp -I/usr/local/include/opencv -I/usr/local/include -I/usr/local/include/tesseract -I/usr/local/include/leptonica -L/usr/local/lib  -lopencv_core  -lopencv_highgui -lopencv_imgproc  -lrt -lpthread -lm -ldl -L/usr/local/lib -ltesseract -ltinyxml -lpython2.7"
+	IncLib="`pkg-config --cflags opencv` `pkg-config --cflags tesseract`  `pkg-config --libs opencv` `pkg-config --libs tesseract` `pkg-config --libs tinyxml` -lpython2.7 -ljsoncpp -lzbar"
+	gccx="g++ -w -g -o main  main.cpp getanswer.cpp preciseloc.cpp roughloc.cpp common.cpp savetotrain.cpp  parts/ocr_cnn.cpp parts/ocr_tess.cpp parts/part_select.cpp parts/part_xuehao.cpp parts/part_zuguan.cpp $IncLib "
 	echo $gccx
 	$gccx
 	echo -e "\e[1;31m编译完成\e[0m"
@@ -31,11 +31,11 @@ if [ "$test" == "-t" ];then
 	./main ./data/img072.jpg
 
 	#echo -e "\e[1;31m运行结果:\e[0m"
-	#ls -lh ./result/img072 
-	
-	# #tesseract 测试 	
+	#ls -lh ./result/img072
+
+	# #tesseract 测试
 	#cat ./result/img072/img072_tess.txt
-	
+
 	# #cnn 测试
 	# python ./parts/ocr/online/img_proc.py
 	# python ./parts/ocr/online/cnn_ocr.py

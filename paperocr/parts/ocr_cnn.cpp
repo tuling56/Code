@@ -6,8 +6,8 @@
 * Status: 
 * Date:	[6/25/2015 jmy]
 ************************************************************************/
-#include<Python.h> //#include<python2.7/Python.h>  
 #include "../common.h"
+#include<python2.7/Python.h>  
 
 using namespace std;
 

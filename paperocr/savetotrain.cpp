@@ -14,8 +14,9 @@
 #include <jsoncpp/json/json.h>
 
 using namespace cv;
-using namespace std;
 using namespace Json;
+using namespace std;
+
 
 /*
  *	功能：将一个学生试卷的定位和识别结果写入json文件,交互接口
@@ -40,9 +41,11 @@ string savetojson(string imagepath,string xuehao, vector<SLocAnswer> locanswers)
 
 	//文件保存
 	string resfile = imagepath + "_ocr.json";
-	ofstream ocrres(resfile.c_str());
-	ocrres<<styled_writer(paper_res);
-	ocrres.close();
+
+	std::ofstream jf;
+	jf.open(resfile.c_str(), std::ios::binary);
+	jf << styled_writer.write(paper_res);
+	jf.close();
 
 	//返回识别结果
 	return styled_writer.write(paper_res);

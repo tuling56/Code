@@ -51,6 +51,7 @@ bool SortByY(const cv::Rect &r1, const cv::Rect &r2);
 bool SortByWidth(const cv::Rect &r1, const cv::Rect &r2);
 bool SortByHeight(const cv::Rect &r1, const cv::Rect &r2);
 bool SortByPx(const cv::Point &p1, const cv::Point &p2);
+bool SortBySx(const SLocAnswer &s1, const SLocAnswer &s2);
 
 
 
@@ -65,13 +66,13 @@ int preciseloc(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &locs)
 std::string getanswer(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &answers);
 
 //*****子系统
-std::string xuehaotiProcess(std::string pymodulepath, std::string qr_img_path);
+std::string xuehaotiProcess(cv::Mat qrgray);
 int selectProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
 int zuguantiProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
 
 
 //识别结果保存和再训练
-std::string savetojson(std::string filename, std::vector<SLocAnswer > locanswers);
+std::string savetojson(std::string filename,std::string xuehao,std::vector<SLocAnswer > locanswers);
 int savetotrain(std::string outpath,std::vector<SLocAnswer > locanswers);
 
 
