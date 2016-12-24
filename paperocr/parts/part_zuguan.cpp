@@ -97,14 +97,14 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 	vector< vector<float> > allconfidences;
 	for (vector<SLocAnswer>::iterator it = locs.begin(); it!= locs.end(); it++)
 	{
-			int conf=0;
-			string answervalue;
-			vector<string> answercontent;
-			vector<float> answerconfidences;
-			tess_ocr(tess, it->pic, answervalue,conf,answercontent, answerconfidences);
-			//string cnn_res=cnn_ocr(picf,cnnpypath,modulefile,whats);
-			it->content = answervalue;
-			it->confidences = answerconfidences;
+		int conf=0;
+		string answervalue;
+		vector<string> answercontent;
+		vector<float> answerconfidences;
+		tess_ocr(tess, it->pic, answervalue,conf,answercontent, answerconfidences);
+		//string cnn_res=cnn_ocr(picf,cnnpypath,modulefile,whats);
+		it->content = answervalue;
+		it->confidences = answerconfidences;
 	}
 
 	//step3:关闭引擎

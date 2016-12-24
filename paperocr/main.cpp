@@ -17,12 +17,6 @@ string  singleproc(string filename,string resTrainpath)
 		return 0;
 	}
 
-	//获取当前指向程序的路径(主要用于确定临时文件的存储)
-	char *curpath;
-	curpath = (char *)malloc(60);
-	getcwd(curpath, 60);
-	printf("当前执行程序路径:%s", curpath);
-
 
     //输入文件
     string fnameExt=filename.substr(filename.rfind("/")+1);
