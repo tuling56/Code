@@ -1,37 +1,8 @@
-#include "../online.h"
+#include "../common.h"
 
 using namespace cv;
 using namespace std;
 
-
-//自定义排序函数 (sort by x) 
-bool SortByX(const Rect &p1, const Rect &p2)//注意：本函数的参数的类型一定要与vector中元素的类型一致  
-{
-	return p1.tl().x < p2.tl().x;//升序排列
-
-	if (abs(p1.tl().x - p2.tl().x)<p1.width / 4){
-		return p1.tl().x < p2.tl().x;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-bool SortByY(const Rect &p1, const Rect &p2)
-{
-	return p1.tl().y < p2.tl().y;
-}
-
-bool SortByWidth(const Rect &r1, const Rect &r2)
-{
-	return r1.width < r2.width;
-}
-
-bool SortByHeight(const Rect &r1, const Rect &r2)
-{
-	return r1.height < r2.height;
-}
 
 
 /*
@@ -225,15 +196,13 @@ int areaAdjust(Mat &img, Mat &srcn)
 
 	//选取最大连通域
 
-
-
 	return 0;
 }
 
 
 
 /* 选择题处理
- * 输入：精定位图像，区域标示
+ * 输入：选择题精定位图像，区域标示
  * 输出：位置和识别结果
  */
 int selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
@@ -345,7 +314,7 @@ int selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			vector<string> tihaocontent;
 			vector<float> tihaoconfidences;
 			tess_ocr(tess, tihaon, tihaovalue,conf,tihaocontent, tihaoconfidences);
-			//string tihao_cnn_res=cnn_ocr(picf,cnnpypath,modulefile,whats);
+			//string tihao_cnn_res=cnn_ocr(tihaon,cnnpypath,modulefile,whats);
 			now_tihao.pic = tihao;
 			now_tihao.content = tihaovalue;
 			now_tihao.confidences = tihaoconfidences;
@@ -354,7 +323,7 @@ int selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			vector<string> answercontent;
 			vector<float> answerconfidences;
 			tess_ocr(tess, answern, answervalue,conf,answercontent, answerconfidences);
-			//string answer_cnn_res=cnn_ocr(picf,cnnpypath,modulefile,whats);
+			//string answer_cnn_res=cnn_ocr(tihaon,cnnpypath,modulefile,whats);
 			now_answer.pic = answer;
 			now_answer.content = answervalue;
 			now_answer.confidences = answerconfidences;

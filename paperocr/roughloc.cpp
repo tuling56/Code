@@ -1,15 +1,8 @@
-#include "online.h"
+#include "common.h"
 
 using namespace cv;
 using namespace std;
 
-/*
- * 功能:自定义排序函数  
- */
-bool SortByM1(const Point &p1, const Point &p2)//注意：本函数的参数的类型一定要与vector中元素的类型一致  
-{
-	return p1.y < p2.y;//升序排列  
-}
 
 
 /*	功能：点排序（确定每一个点的对应位置）
@@ -23,7 +16,7 @@ int SortPoint(vector<Point> locmarks,vector<Point> &markps)
 			std::cout << it->x << '\t' << it->y << std::endl;
 		}
 	}
-	sort(locmarks.begin(), locmarks.end(), SortByM1);
+	sort(locmarks.begin(), locmarks.end(), SortByPx);
 	if (0){
 		cout << "排序后:"<< endl;
 		for (std::vector<Point>::iterator it = locmarks.begin(); it!=locmarks.end(); it++){

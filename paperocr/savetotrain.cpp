@@ -5,7 +5,7 @@
 * Brief:将结果保存为json文件,待训练图像按识别结果分类保存
 * Status:
 ************************************************************************/
-#include "online.h"
+#include "common.h"
 #include <sstream>
 #include <fstream>
 #include <unistd.h>
@@ -19,17 +19,15 @@ using namespace Json;
 
 /*
  *	功能：将一个学生试卷的定位和识别结果写入json文件,交互接口
- *	输入:stuNum（二维码识别结果）,vector<SLocAnswer> locanswers (选择题每个部分和主观题每个部分)
+ *	输入:imagepath 文件路径，xuehao（二维码识别结果）,vector<SLocAnswer> locanswers (选择题每个部分和主观题每个部分)
  * 
  */
-string savetojson(string stuNum, vector<SLocAnswer> locanswers)
+string savetojson(string imagepath,string xuehao, vector<SLocAnswer> locanswers)
 {
-	string resfile = stuNum + "_tess.json";
-	ofstream ocrres(resfile.c_str());
 
 	Json::Value paper_res;
-	paper_res["image_path"]="/data/img/xxx.jpg";
-	paper_res["qr_code"]="paper_id=xxxxxxx&page_num=1"; 
+	paper_res["image_path"]=imagepath;
+	paper_res["qr_code"]=xuehao; 
 	paper_res["student_id"]="20161202";
 
 	//涵盖选择题和主观题
@@ -39,6 +37,10 @@ string savetojson(string stuNum, vector<SLocAnswer> locanswers)
 	}
 
 	Json::StyledWriter styled_writer;
+
+	//文件保存
+	string resfile = imagepath + "_ocr.json";
+	ofstream ocrres(resfile.c_str());
 	ocrres<<styled_writer(paper_res);
 	ocrres.close();
 
@@ -55,9 +57,9 @@ int savetotrain(string outpath, vector<SLocAnswer> locanswers)
 {
 	for (vector<SLocAnswer>::iterator it = locanswers.begin(); it != locanswers.end(); it++)
 	{
-		//创建子目录
+		//创建子目录(以识别结果为准)
 		if (NULL == opendir(it->what.c_str())){
-			mkdir(resTrainpath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			mkdir(outpath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		}
 		string filename = outpath +"/"+it->what+"/"+it->what + ".png";
 		imwrite(filename, it->pic);

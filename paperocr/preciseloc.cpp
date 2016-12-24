@@ -1,19 +1,9 @@
-#include "online.h"
+#include "common.h"
 #include <math.h>
 
 
 using namespace cv;
 using namespace std;
-
-// 计算两条线段的夹角:pt0->pt1 and from pt0->pt2
-static double angle( Point pt1, Point pt2, Point pt0 )
-{
-    double dx1 = pt1.x - pt0.x;
-    double dy1 = pt1.y - pt0.y;
-    double dx2 = pt2.x - pt0.x;
-    double dy2 = pt2.y - pt0.y;
-    return (dx1*dx2 + dy1*dy2)/sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
-}
 
 
 /* 功能：精确定位
@@ -89,7 +79,6 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 				part_xuehao.pic = qr;
 				precise_boxes.push_back(part_xuehao);
 			}
-
 		}
 	}
 
@@ -158,7 +147,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 							rectangle(demo, expandbox,Scalar(0,255,0), 2, CV_AA);
 							rectangle(demo, box, newVal, 1, CV_AA);		
 
-							//选择题框纳入精定位结果
+							//选择题框纳入精定位结果(这里是精确定位的结果，选择题答题域（细分粗域和细域）)
 							SLocAnswer part_select;
 							part_select.what = areaflag;
 							part_select.where = expandbox;

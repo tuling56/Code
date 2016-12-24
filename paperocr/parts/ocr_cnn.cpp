@@ -7,17 +7,18 @@
 * Date:	[6/25/2015 jmy]
 ************************************************************************/
 #include<Python.h> //#include<python2.7/Python.h>  
-#include<stdio.h>
-#include<string>
+#include "../common.h"
 
 using namespace std;
 
 /*	功能：python cnn识别的cpp调用
- *	输入：python 图像路径,cnn模块的路径,模型文件路径，要识别的内容的类型
+ *	输入：Mat 图像,cnn模块的路径,模型文件路径，要识别的内容的类型
  *	输出：识别结果
  */
-string  cnn_ocr(string picpath,string cnnpypath,string modulepath,string whats)
+string  cnn_ocr(cv::Mat src,string cnnpypath,string modulepath,string whats)
 {
+	string picvecstr = mat2vecstr(src);
+
 	printf("CNN识别阶段:\n");
 	Py_Initialize();
 	PyRun_SimpleString("import sys");
@@ -30,7 +31,7 @@ string  cnn_ocr(string picpath,string cnnpypath,string modulepath,string whats)
 
 	pMode = PyImport_ImportModule("cnn_ocr");
 	pfunc = PyObject_GetAttrString(pMode, "cnn_ocr");
-	pArg = Py_BuildValue("sss", picpath.c_str(),modulepath.c_str(),whats.c_str());
+	pArg = Py_BuildValue("sss", picvecstr,modulepath.c_str(),whats.c_str());
 	pRet = PyEval_CallObject(pfunc,pArg);
 
 	//获取返回结果

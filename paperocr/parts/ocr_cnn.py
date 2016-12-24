@@ -29,7 +29,7 @@ except Exception,e:
     print "no cv model,use PIL instead"
     from PIL import Image
 
-# 这部分可以放在c++程序中处理，从而避开文件的保存环节
+# 这部分可以放在c++程序中处理，从而避开文件的保存环节（已放在c++中程序中完成）
 def processpic(picname):
     if HAS_CV:
         img=cv2.imread(picname,0)
@@ -56,7 +56,8 @@ def processpic(picname):
 import tensorflow as tf
 from tensorflow.python.platform import gfile # 图模型文件
 
-def cnn_predict(vsample,modulename,whats):
+def cnn_predict(vsamplestr,modulename,whats):
+	vsample=eval(vsamplestr) 				# 字符串形式的列表转列表
 	print "\033[1;31mload model>>>\033[0m"
 	prev_char=""
 	with tf.Session() as sess:

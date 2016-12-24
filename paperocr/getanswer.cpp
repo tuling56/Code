@@ -1,4 +1,4 @@
-#include "online.h"
+#include "common.h"
 
 using namespace cv;
 using namespace std;
@@ -7,32 +7,34 @@ using namespace std;
 /*
  * 功能: 区域分解和识别
  * 输入：精确定位后的区域，该答题区域的标示areaflag
- * 输出：每个答题项的位置，意义和（内容）
+ * 输出：每个答题项的位置，意义和（内容）,locs用于存储最终的内容
+ * 返回：学号信息（若识别不到学号信息，整个试卷的识别是无意义的）
  */
-int areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs)
+string areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs)
 {
 	CV_Assert( !preciseimg.empty() );
 	
 	if (areaflag=="xuehao")	{			//调用python接口返回学号
 		//cout << "学号区" << endl;
-		string xuehaopath = "";
-		string xuehaoimg = "";
-		string xuehao = xuehaotiProcess(xuehaopath, xuehaoimg);
+		string xuehaopath = "";			//学号模块的路径
+		string xuehaoimg = "";			//学号图像
+		string xuehaoinfo = xuehaotiProcess(xuehaopath, xuehaoimg);
+		return xuehaoinfo;
 	}
 	else if (areaflag=="xuanzeti"){
 		selectProcess(preciseimg, areaflag, locs);
 	}
 	else if (areaflag.find("zuguanti")!=string::npos){
 		//cout << "解答题区" << endl;
-		zuguantiProcess(preciseimg, areaflag, locs); //处理的是每个主观题
+		zuguantiProcess(preciseimg, areaflag, locs);	//处理的是每个主观题
 	}
 	else{
 		//cout << "非定义区域" << endl;
 		//do something
-		return 0;
+		return "";
 	}
 
-	return 0;	
+	return "";	
 }
 
 
@@ -40,11 +42,11 @@ int areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs)
  * 功能：答题域识别入口 
  * 输入：精确定位后的区域，该答题区域的标示areaflag
  * 输出：每个答题项的位置，意义和（内容）
+ * 返回：学号信息
  * 完善：高斯金字塔去噪
  */
-int getanswer(Mat preciseimg,string areaflag,vector<SLocAnswer> &answerloc)
+string getanswer(Mat preciseimg,string areaflag,vector<SLocAnswer> &answerloc)
 {
-	
 	//前置预处理程序
 	int spatialRad = 20;
 	int colorRad = 20;
@@ -55,9 +57,11 @@ int getanswer(Mat preciseimg,string areaflag,vector<SLocAnswer> &answerloc)
     
 	
 	//调用各个模块的识别
-	areaDecomposeOCR(preciseimg,areaflag,answerloc);
+	string xuehao=areaDecomposeOCR(preciseimg,areaflag,answerloc);
+	if (xuehao == "")
+		return "xuehaoerror";
 
-	return 0;
+	return xuehao;
 }
 
 

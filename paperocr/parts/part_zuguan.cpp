@@ -1,57 +1,12 @@
-#include "../online.h"
+#include "../common.h"
 
 using namespace cv;
 using namespace std;
 
 
-//自定义排序函数 (sort by x) 
-bool LSortByX(const SLocAnswer &s1, const SLocAnswer &s2)//注意：本函数的参数的类型一定要与vector中元素的类型一致  
-{
-	Rect rs1 = s1.where;
-	Rect rs2 = s2.where;
-	return rs1.tl().x < rs2.tl().x;			//升序排列
-}
-
-
-/*
-*	功能：判断两个矩形是否相交，和重叠率
-*  输入：Rect r1,Rect r2
-*  输出：重叠率
-*  状态：
-*/
-float bbOverlap(Rect& box1, Rect& box2)
-{
-	if (box1.x > box2.x + box2.width) { return 0.0; }
-	if (box1.y > box2.y + box2.height) { return 0.0; }
-	if (box1.x + box1.width < box2.x) { return 0.0; }
-	if (box1.y + box1.height < box2.y) { return 0.0; }
-
-	float colInt = min(box1.x + box1.width, box2.x + box2.width) - max(box1.x, box2.x);
-	float rowInt = min(box1.y + box1.height, box2.y + box2.height) - max(box1.y, box2.y);
-	float intersection = colInt * rowInt;
-
-	float area1 = box1.width*box1.height;
-	float area2 = box2.width*box2.height;
-	
-	
-	float ovlap1 = intersection / area1;
-	float ovlap2 = intersection / area2;
-	float ovlap3= intersection / (area1 + area2 - intersection); //重叠面积占总面积的比
-
-	//最大的重叠率返回
-	float ovlapmax = ovlap1;
-	if (ovlap2 > ovlapmax)
-		ovlapmax = ovlap2;
-	if (ovlap3 > ovlapmax)
-		ovlapmax = ovlap3;
-
-	return ovlapmax;
-
-}
-
 
 /* 主观题处理
- * 输入：精定位图像，区域标示（例如：zguanti_1）
+ * 输入：主观题精定位图像，区域标示（例如：zguanti_1）
  * 输出：（对多数字的支持）位置和识别结果
  */
 int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
@@ -134,7 +89,7 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 	initOCR(tess);
 
 	//对主观题进行位置左右划分
-	sort(locs.begin(),locs.end(), LSortByX);
+	sort(locs.begin(),locs.end(), SortBySx);
 
 	//step2:识别和保存
 	char s[50];

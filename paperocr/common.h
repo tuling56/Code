@@ -42,6 +42,17 @@ std::string getPath(std::string s);
 std::string getFilenameWithExt(std::string s);
 std::string getFilenameWithNoExt(std::string s);
 
+std::string mat2vecstr(cv::Mat image);
+float bbOverlap(cv::Rect& box1, cv::Rect& box2);
+double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);
+
+bool SortByX(const cv::Rect &r1, const cv::Rect &r2);
+bool SortByY(const cv::Rect &r1, const cv::Rect &r2);
+bool SortByWidth(const cv::Rect &r1, const cv::Rect &r2);
+bool SortByHeight(const cv::Rect &r1, const cv::Rect &r2);
+bool SortByPx(const cv::Point &p1, const cv::Point &p2);
+
+
 
 /*****************************流程函数声明*******************************/
 //粗定位（得到答题的大致区域）
@@ -51,7 +62,7 @@ int roughloc(cv::Mat src, std::vector<SRPart > &rougharea);
 int preciseloc(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &locs);
 
 //获取答题内容（精确到每道题和答案）
-int getanswer(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &answers);
+std::string getanswer(cv::Mat src, std::string areaflag,std::vector<SLocAnswer > &answers);
 
 //*****子系统
 std::string xuehaotiProcess(std::string pymodulepath, std::string qr_img_path);
@@ -61,7 +72,7 @@ int zuguantiProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAn
 
 //识别结果保存和再训练
 std::string savetojson(std::string filename, std::vector<SLocAnswer > locanswers);
-int savetotrain(std::string outpath, std::vector<SLocAnswer > locanswers);
+int savetotrain(std::string outpath,std::vector<SLocAnswer > locanswers);
 
 
 /*****************************功能函数声明*******************************/
@@ -75,7 +86,7 @@ int tess_ocr(tesseract::TessBaseAPI &tess, cv::Mat src,std::string&output,int &c
 int closeOCR(tesseract::TessBaseAPI &tess);
 
 /*part2:cnn*/
-std::string cnn_ocr(std::string picpath,std::string cnnpypath,std::string modulepath,std::string whats);
+std::string cnn_ocr(cv::Mat src,std::string cnnpypath,std::string modulepath,std::string whats);
 
 
 #endif
