@@ -7,9 +7,10 @@ using namespace std;
 
 /* 主观题处理
  * 输入：主观题精定位图像，区域标示（例如：zguanti_1）
- * 输出：（对多数字的支持）位置和识别结果
+ * 输出：（对多数字的支持）位置的单独识别结果（vector<SLocAnswer> &locs）
+ * 返回：整个主观题的识别结果
  */
-int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
+string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 {
 	CV_Assert(!preciseimg.empty());
 	RNG rng = theRNG();
@@ -84,33 +85,38 @@ int zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 	}
 
 
-	//step1:初始化引擎
+	/***part1:cnn识别和保存****/
+	string whats = "0123456789";
+	sort(locs.begin(), locs.end(), SortBySx); 	   //对主观题多数字情况下进行位置左右划分
+	ostringstream cnn_res;
+	for (vector<SLocAnswer>::iterator it = locs.begin(); it!= locs.end(); it++)
+	{
+		string res=cnn_ocr(it->pic,whats);
+		it->content = res;
+		cnn_res << res;
+	}
+
+	string cnnocr = cnn_res.str();
+
+	/***part2:tess识别和保存*****/
 	tesseract::TessBaseAPI tess;
 	initOCR(tess);
 
-	//对主观题进行位置左右划分
-	sort(locs.begin(),locs.end(), SortBySx);
+	int conf = 0;
+	string tessocr;
+	vector<string> tessocr_detail;
+	vector<float> confidences;
+	tess_ocr(tess, preciseimg, tessocr, conf, tessocr_detail,confidences);
 
-	//step2:识别和保存
-	char s[50];
-	int j = 0;
-	vector< vector<float> > allconfidences;
-	for (vector<SLocAnswer>::iterator it = locs.begin(); it!= locs.end(); it++)
-	{
-		int conf=0;
-		string answervalue;
-		vector<string> answercontent;
-		vector<float> answerconfidences;
-		tess_ocr(tess, it->pic, answervalue,conf,answercontent, answerconfidences);
-		//string cnn_res=cnn_ocr(picf,cnnpypath,modulefile,whats);
-		it->content = answervalue;
-		it->confidences = answerconfidences;
-	}
-
-	//step3:关闭引擎
 	closeOCR(tess);
 
-	return 0;
+	/***part3:结果评判***/
+	vector<float> statres;
+	vectorstat(confidences, statres);
+	if (statres[1] > 70)
+		return tessocr;
+	else
+		return cnnocr;
 }
 
 

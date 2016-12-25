@@ -10,5 +10,5 @@ $gccx
 ret=$?
 [ "$ret" -eq "0" ]&&echo -e "\e[1;31m编译测试成功\e[0m"||echo -e "\e[1;31m编译测试失败！！！\e[0m"
 
-[ -f ./unit_exec ]&&echo -e "\e[1;31m运行测试:\e[0m]"
+[ -f ./unit_exec ]&&echo -e "\e[1;31m运行测试:\e[0m"
 ./unit_exec && rm -f ./unit_exec

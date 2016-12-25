@@ -32,7 +32,7 @@ struct SLocAnswer{
 	cv::Mat pic;						//图像
 	std::string content;				//图像整体识别结果
 	std::vector<std::string> contents;	//图像内部每个字符的识别结果
-	std::vector<float> confidences;     //图像内部每个字符的识别置信率(扩充多选答案的时候)
+	std::vector<float> confidences;    //图像内部每个字符的识别置信率(扩充多选答案的时候)
 };
 
 
@@ -44,7 +44,7 @@ std::string getFilenameWithNoExt(std::string s);
 
 std::string mat2vecstr(cv::Mat image);
 float bbOverlap(cv::Rect& box1, cv::Rect& box2);
-double angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);
+float angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);
 
 bool SortByX(const cv::Rect &r1, const cv::Rect &r2);
 bool SortByY(const cv::Rect &r1, const cv::Rect &r2);
@@ -52,6 +52,9 @@ bool SortByWidth(const cv::Rect &r1, const cv::Rect &r2);
 bool SortByHeight(const cv::Rect &r1, const cv::Rect &r2);
 bool SortByPx(const cv::Point &p1, const cv::Point &p2);
 bool SortBySx(const SLocAnswer &s1, const SLocAnswer &s2);
+
+//依次返回和，均值，方差，最大值，最小值
+int vectorstat(std::vector<float> invec, std::vector<float> outvec);
 
 
 
@@ -67,8 +70,8 @@ std::string getanswer(cv::Mat src, std::string areaflag,std::vector<SLocAnswer >
 
 //*****子系统
 std::string xuehaotiProcess(cv::Mat qrgray);
-int selectProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
-int zuguantiProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
+std::string selectProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
+std::string zuguantiProcess(cv::Mat preciseimg, std::string areaflag, std::vector<SLocAnswer > &locs);
 
 
 //识别结果保存和再训练
@@ -87,7 +90,7 @@ int tess_ocr(tesseract::TessBaseAPI &tess, cv::Mat src,std::string&output,int &c
 int closeOCR(tesseract::TessBaseAPI &tess);
 
 /*part2:cnn*/
-std::string cnn_ocr(cv::Mat src,std::string cnnpypath,std::string modulepath,std::string whats);
+std::string cnn_ocr(cv::Mat src,std::string whats);
 
 
 #endif

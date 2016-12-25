@@ -39,7 +39,7 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 	}
 
 	//初始化工作
-	double t = (double)getTickCount();
+	float t = (float)getTickCount();
 	tesseract::TessBaseAPI tess;
 	const char *language = "eng";
 	const char* datapath = "/usr/local/share/tessdata";
@@ -64,7 +64,7 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 		if (char_whitelist != NULL)
 			cout << "\t" << char_whitelist << endl;
 	}
-	t = ((double)getTickCount() - t)/getTickFrequency();  
+	t = ((float)getTickCount() - t)/getTickFrequency();  
 	cout<<"init cosume time:"<<t<<"(s)"<<endl;
 
 
@@ -136,7 +136,7 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 
 		//标注单词位置
 		rectangle(src, component_rects[j].tl(), component_rects[j].br(), Scalar(255, 0, 255), 1);
-		Size word_size = getTextSize(component_texts[j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
+		Size word_size = getTextSize(component_texts[j], FONT_HERSHEY_SIMPLEX, (float)scale_font, (int)(3 * scale_font), NULL);
 
 		//标注单词的识别结果
 		//rectangle(src, component_rects[j].tl() - Point(3, word_size.height + 3), component_rects[j].tl() + Point(word_size.width, 0), Scalar(255, 0, 255), -1);
@@ -149,7 +149,7 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 	}
 	tess.Clear();	
 	
-	t = ((double)getTickCount() - t) / getTickFrequency();
+	t = ((float)getTickCount() - t) / getTickFrequency();
 	cout << " ocr cost time:" << t;
 	cout << "(s)" << endl;
 	cout << "---------------[END]------------------" << endl;
@@ -173,7 +173,7 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<string> > &detect_chars, vector<vector<float> > & detect_confidences)
 {
 	//初始化工作
-	double t = (double)getTickCount();
+	float t = (float)getTickCount();
 	tesseract::TessBaseAPI tess;
 	const char *language = "eng";
 	const char* datapath = "/usr/local/share";
@@ -198,7 +198,7 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 		if (char_whitelist != NULL)
 			cout << "\t" << char_whitelist << endl;
 	}
-	t = ((double)getTickCount() - t) / getTickFrequency();
+	t = ((float)getTickCount() - t) / getTickFrequency();
 	cout << "Init consume time:" << t << "(s)" << endl;
 
 	for (vector<Mat>::iterator it = srcs.begin(); it != srcs.end();it++)
@@ -280,7 +280,7 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 
 			//标注单词位置
 			rectangle(src, component_rects[j].tl(), component_rects[j].br(), Scalar(255, 0, 255), 1);
-			Size word_size = getTextSize(component_texts[j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
+			Size word_size = getTextSize(component_texts[j], FONT_HERSHEY_SIMPLEX, (float)scale_font, (int)(3 * scale_font), NULL);
 
 			//标注单词的识别结果
 			//rectangle(src, component_rects[j].tl() - Point(3, word_size.height + 3), component_rects[j].tl() + Point(word_size.width, 0), Scalar(255, 0, 255), -1);
@@ -297,7 +297,7 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 		detect_chars.push_back(detect_char);
 		detect_confidences.push_back(detect_confidence);
 
-		t = ((double)getTickCount() - t) / getTickFrequency();
+		t = ((float)getTickCount() - t) / getTickFrequency();
 		cout << "cost time:" << t << "(s)" << endl;
 		cout << "---------------[END]------------------" << endl;
 		
@@ -323,7 +323,7 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 */
 int initOCR(tesseract::TessBaseAPI &tess)
 {
-	double t = (double)getTickCount();
+	float t = (float)getTickCount();
 
 	//tesseract::TessBaseAPI tess;
 	const char *language = "eng";
@@ -349,7 +349,7 @@ int initOCR(tesseract::TessBaseAPI &tess)
 		if (char_whitelist != NULL)
 			cout << "\t" << char_whitelist << endl;
 	}
-	t = ((double)getTickCount() - t) / getTickFrequency();
+	t = ((float)getTickCount() - t) / getTickFrequency();
 	cout << "init cost time:" << t << "(s)" << endl;
 
 	return 0;
@@ -362,7 +362,7 @@ int initOCR(tesseract::TessBaseAPI &tess)
 int tess_ocr(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vector<string> &detect_words, vector<float> & detect_confidences)
 {
 	//识别阶段
-	double t = (double)getTickCount();
+	float t = (float)getTickCount();
 	tess.SetImage((uchar*)src.data, src.size().width, src.size().height, src.channels(), src.step1());
 	//tess.Recognize(0);
 	output = string(tess.GetUTF8Text());
@@ -429,7 +429,7 @@ int tess_ocr(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vect
 
 		//标注字符位置
 		rectangle(src, component_rects[j].tl(), component_rects[j].br(), Scalar(255, 0, 255), 1);
-		Size word_size = getTextSize(component_texts[j], FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
+		Size word_size = getTextSize(component_texts[j], FONT_HERSHEY_SIMPLEX, (float)scale_font, (int)(3 * scale_font), NULL);
 
 		//标注字符识别结果
 		//rectangle(src, component_rects[j].tl() - Point(3, word_size.height + 3), component_rects[j].tl() + Point(word_size.width, 0), Scalar(255, 0, 255), -1);
@@ -439,7 +439,7 @@ int tess_ocr(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vect
 		cout << "high confidence elem:" << component_texts[j] << "\tconfidence:" << component_confidences[j] << endl;
 		//putText(src, component_texts[j], textloc, FONT_HERSHEY_SIMPLEX, scale_font, Scalar(255, 0, 0), (int)(2 * scale_font));
 	}
-	t = ((double)getTickCount() - t) / getTickFrequency();
+	t = ((float)getTickCount() - t) / getTickFrequency();
 	cout << "cost time:" << t << "(s)" << endl;
 	cout << "---------------[END]------------------" << endl;
 

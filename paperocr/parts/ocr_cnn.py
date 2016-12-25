@@ -57,7 +57,7 @@ def cnn_predict(vsamplestr,modulename,whats):
 '''
 	cpp调用接口
 '''
-def cnn_ocr(vsample,modulename,whats):
+def ocr_cnn_api(vsample,modulename,whats):
 	print "----[vsample]:",vsample
 	print "----[module]:",modulename
 	whats=list(whats)

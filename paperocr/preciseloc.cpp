@@ -131,9 +131,9 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 						}
 
 						//拟合的四边形是否接近矩形
-	                    double maxCosine = 0;
+	                    float maxCosine = 0;
 	                    for( int j = 2; j < 5; j++ ) {
-	                        double cosine = fabs(angle(approx[j%4], approx[j-2], approx[j-1]));
+	                        float cosine = fabs(angle(approx[j%4], approx[j-2], approx[j-1]));
 	                        maxCosine = MAX(maxCosine, cosine);
 	                    }
 

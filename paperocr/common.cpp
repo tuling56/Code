@@ -1,5 +1,7 @@
 #include "common.h"
 #include <stdlib.h>
+#include <numeric>      // std::accumulate  
+#include <algorithm>    // 
 
 using namespace cv;
 using namespace std;
@@ -14,8 +16,8 @@ string mat2vecstr(Mat image)
 	//转化和归一化
 	/*
 	image.convertTo(image, CV_32FC3);
-	double min = 0;
-	double max = 0;
+	float min = 0;
+	float max = 0;
 	minMaxIdx(image, &min, &max);
 	image = (image-min) / (max - 50);
 	*/
@@ -72,22 +74,18 @@ float bbOverlap(Rect& box1, Rect& box2)
 
 }
 
-
 // 计算两条线段的夹角:pt0->pt1 and from pt0->pt2
-double angle(Point pt1, Point pt2, Point pt0)
+float angle(Point pt1, Point pt2, Point pt0)
 {
-	double dx1 = pt1.x - pt0.x;
-	double dy1 = pt1.y - pt0.y;
-	double dx2 = pt2.x - pt0.x;
-	double dy2 = pt2.y - pt0.y;
+	float dx1 = pt1.x - pt0.x;
+	float dy1 = pt1.y - pt0.y;
+	float dx2 = pt2.x - pt0.x;
+	float dy2 = pt2.y - pt0.y;
 	return (dx1*dx2 + dy1*dy2) / sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
 }
 
 
-
-/*
- * 功能：自定义排序函数系列
- */
+// 功能：自定义排序函数系列
 bool SortByX(const Rect &p1, const Rect &p2)//注意：本函数的参数的类型一定要与vector中元素的类型一致  
 {
 	return p1.tl().x < p2.tl().x;			//升序排列
@@ -125,4 +123,42 @@ bool SortBySx(const SLocAnswer &s1, const SLocAnswer &s2)
 	Rect rs1 = s1.where;
 	Rect rs2 = s2.where;
 	return rs1.tl().x < rs2.tl().x;			//升序排列
+}
+
+//vector<num>统计
+int vectorstat(vector<float> invec,vector<float> outvec)
+{
+	float sum = 0;
+	float minv = 0;
+	float maxv = 0;
+	for (vector<float>::iterator it = invec.begin(); it != invec.end(); it++)
+	{
+		sum = sum + *it;
+		if (*it > maxv)
+			maxv = *it;
+		if (*it < minv)
+			minv = *it;
+	}
+	float mean = sum / invec.size();
+
+
+	//计算方差
+	float acsum = 0;
+	for (vector<float>::iterator it = invec.begin(); it != invec.end(); it++)
+	{
+		acsum += (*it - mean)*(*it - mean);
+	}
+	float stdev = sqrt(acsum / (invec.size() - 1));
+
+
+
+	//返回
+	outvec.clear();
+	outvec.push_back(sum);
+	outvec.push_back(mean);
+	outvec.push_back(stdev);
+	outvec.push_back(maxv);
+	outvec.push_back(minv);
+
+	return 0;
 }

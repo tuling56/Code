@@ -36,15 +36,17 @@ string  cnn_ocr(cv::Mat src,string whats)
 	printf("CNN识别阶段:\n");
 	Py_Initialize();
 	PyRun_SimpleString("import sys");
-	PyRun_SimpleString(cnnpypath.c_str());
+	string importstr="sys.path.append(\""+cnnpypath+"\")";
+    cout<<"导入模块路径:"<<importstr<<endl;
+    PyRun_SimpleString(importstr.c_str());
 
 	PyObject *pMode = NULL;
 	PyObject *pfunc = NULL;
 	PyObject *pArg = NULL;
 	PyObject *pRet = NULL;
 
-	pMode = PyImport_ImportModule("cnn_ocr");
-	pfunc = PyObject_GetAttrString(pMode, "cnn_ocr");
+	pMode = PyImport_ImportModule("ocr_cnn");
+	pfunc = PyObject_GetAttrString(pMode, "ocr_cnn_api");
 	pArg = Py_BuildValue("sss", picvecstr,modulepath.c_str(),whats.c_str());
 	pRet = PyEval_CallObject(pfunc,pArg);
 
@@ -63,7 +65,7 @@ string  cnn_ocr(cv::Mat src,string whats)
 }
 
 //测试
-int main()
+int main_ocrcnn()
 {
 	Mat src = imread("samples/1.bmp", 0);
 	if (src.empty()){

@@ -178,7 +178,7 @@ int areaAdjust(Mat &img, Mat &srcn)
 	//二值化
 	int adaptive_method = CV_ADAPTIVE_THRESH_GAUSSIAN_C;
 	int block_size = 3;
-	double offset = 12.0;
+	float offset = 12.0;
 	if (src.channels() == 3){
 		cvtColor(srcn, srcn, CV_BGR2GRAY);
 	}
@@ -204,13 +204,14 @@ int areaAdjust(Mat &img, Mat &srcn)
 /* 选择题处理
  * 输入：选择题精定位图像，区域标示
  * 输出：位置和识别结果
+ * 返回：依次选择题识别结果
  */
-int selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
+string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 {
 	CV_Assert(!preciseimg.empty());
 	RNG rng = theRNG();
 
-	//图像漫水和分割（先二值化再漫水）
+	/***part1:图像漫水和分割（先二值化再漫水）,得到每个选择题图像***/
 	Mat floodimg;
 	preciseimg.copyTo(floodimg);
 	cvtColor(floodimg, floodimg, CV_RGB2GRAY);
@@ -267,17 +268,21 @@ int selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 		return 0;
 	}
 
-	//初始化引擎
+
+	/***part2:对每个选择题图像进行识别（含多选的情况）***/
 	tesseract::TessBaseAPI tess;
 	initOCR(tess);
 
-	//答案定位和识别
 	vector<Rect> recover;
 	bindTihaoAnswer(now, floodRects, "xuanzeti", recover);
 	sort(recover.begin(), recover.end(), SortByX);
+	
+
+	ostringstream select_tessres;
+	ostringstream select_cnnres;
+	string whats = "ABCD";
+
 	int n = 1, j = 0;
-	char s[50];
-	vector< vector<float> > allconfidences;
 	for (vector<Rect>::iterator itrect = recover.begin(); itrect != recover.end(); itrect++)
 	{
 		rectangle(now, *itrect, Scalar(0, 0, 255), 1, CV_AA);
@@ -314,43 +319,44 @@ int selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			vector<string> tihaocontent;
 			vector<float> tihaoconfidences;
 			tess_ocr(tess, tihaon, tihaovalue,conf,tihaocontent, tihaoconfidences);
-			//string tihao_cnn_res=cnn_ocr(tihaon,cnnpypath,modulefile,whats);
+			string tihao_cnn_res=cnn_ocr(tihaon,whats);
 			now_tihao.pic = tihao;
 			now_tihao.content = tihaovalue;
 			now_tihao.confidences = tihaoconfidences;
 
-			string answervalue;
-			vector<string> answercontent;
-			vector<float> answerconfidences;
-			tess_ocr(tess, answern, answervalue,conf,answercontent, answerconfidences);
-			//string answer_cnn_res=cnn_ocr(tihaon,cnnpypath,modulefile,whats);
+			string answer_tessres;
+			vector<string> answer_tessres_detail;
+			vector<float> answer_tessres_detail_conf;
+			tess_ocr(tess, answern, answer_tessres,conf,answer_tessres_detail, answer_tessres_detail_conf);
+			string answer_cnnres=cnn_ocr(answern,whats);
 			now_answer.pic = answer;
-			now_answer.content = answervalue;
-			now_answer.confidences = answerconfidences;
+			now_answer.content = answer_tessres;
+			now_answer.confidences = answer_tessres_detail_conf;
 
 			locs.push_back(now_tihao);
 			locs.push_back(now_answer);
 
+			select_tessres << answer_tessres << ",";
+			select_cnnres << answer_cnnres << ",";
+
+
 			//结果标注
 			float scale_img = (float)(600.f / preciseimg.rows);
 			float scale_font = 0.7; // (float)(abs(2 - scale_img)) / 1.2f;
-			Size word_size = getTextSize(answervalue, FONT_HERSHEY_SIMPLEX, (double)scale_font, (int)(3 * scale_font), NULL);
-			putText(preciseimg, answervalue, now_answer.where.tl(), FONT_HERSHEY_SIMPLEX, scale_font, Scalar(0, 0, 255), (int)(2 * scale_font));
-
-			/*
-			sprintf(s, "segres/t/tihao_%d.jpg", j);
-			imwrite(s, tihaon);
-			sprintf(s, "segres/t/answer_%d.jpg", j);
-			imwrite(s, answern);
-			*/
+			Size word_size = getTextSize(answer_tessres, FONT_HERSHEY_SIMPLEX, (float)scale_font, (int)(3 * scale_font), NULL);
+			putText(preciseimg, answer_tessres, now_answer.where.tl(), FONT_HERSHEY_SIMPLEX, scale_font, Scalar(0, 0, 255), (int)(2 * scale_font));
 
 			j++;
 		}
 		n++;
 	}
 
-	//关闭引擎
 	closeOCR(tess);
 
-	return 0;
+	string tessocr = select_tessres.str();
+	string cnnocr = select_cnnres.str();
+
+
+	//暂时先设定返回tess的结果
+	return tessocr;
 }
