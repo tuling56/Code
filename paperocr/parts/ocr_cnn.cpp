@@ -63,9 +63,9 @@ string  cnn_ocr(cv::Mat src,string whats)
     cout<<"----whats:"<<whats<<endl;
 
     pArgs = PyTuple_New(3);
-    PyTuple_SetItem(pArgs,0,Py_BuildValue("s",picvecstr.c_str()));
-    PyTuple_SetItem(pArgs,1,Py_BuildValue("s",model.c_str()));
-    PyTuple_SetItem(pArgs,2,Py_BuildValue("s",whats.c_str()));
+    PyTuple_SetItem(pArgs,0,Py_BuildValue("(s)",picvecstr.c_str()));
+    PyTuple_SetItem(pArgs,1,Py_BuildValue("(s)",model.c_str()));
+    PyTuple_SetItem(pArgs,2,Py_BuildValue("(s)",whats.c_str()));
 	pRet = PyEval_CallObject(pfunc,pArgs);
 
 	//获取返回结果
