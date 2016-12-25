@@ -19,36 +19,53 @@ using namespace std;
 string  cnn_ocr(cv::Mat src,string whats)
 {
 
-	//当前路径获取，用于确定模块路径的位置
-	char *curpath_tmp;
-	curpath_tmp = (char *)malloc(60);
-	getcwd(curpath_tmp, 60);
-	printf("当前执行程序路径:%s\n", curpath_tmp);
-	string curpath = curpath_tmp;
+	string modelname;
+	if (whats.find("ABCD") != string::npos)
+		modelname = "Model_ABCD";
+	else if (whats.find("0123456789") != string::npos)
+		modelname = "Model_0-9";
+	else{
+		cout << "whats indict error" << endl;
+		return "model error";
+	}
+	
 
+	string curpath = getcurpath();
 	string cnnpypath = curpath + "/parts/";
-	string modulepath = curpath + "/parts/models";
-    cout<<"cnnpypath:"<<cnnpypath<<endl;
-    cout<<"modulepath:"<<modulepath<<endl;
+	string model = curpath + "/parts/models/cnn/"+modelname;
 
 	string picvecstr = mat2vecstr(src);
 
-	printf("CNN识别阶段:\n");
+	cout<<"CNN识别阶段:"<<endl;
 	Py_Initialize();
 	PyRun_SimpleString("import sys");
 	string importstr="sys.path.append(\""+cnnpypath+"\")";
-    cout<<"导入模块路径:"<<importstr<<endl;
+    //cout<<"导入模块路径:"<<importstr<<endl;
     PyRun_SimpleString(importstr.c_str());
 
 	PyObject *pMode = NULL;
 	PyObject *pfunc = NULL;
-	PyObject *pArg = NULL;
+	PyObject *pArgs = NULL;
 	PyObject *pRet = NULL;
 
 	pMode = PyImport_ImportModule("ocr_cnn");
 	pfunc = PyObject_GetAttrString(pMode, "ocr_cnn_api");
-	pArg = Py_BuildValue("sss", picvecstr,modulepath.c_str(),whats.c_str());
-	pRet = PyEval_CallObject(pfunc,pArg);
+    if (!pfunc){
+        printf("cann't find ocr_cnn_api\n");
+        return "load error";
+    }
+
+    //传递三个参数进去
+	cout<<"----cnnpypath:"<<cnnpypath<<endl;
+    cout<<"----modelname:"<<model<<endl;
+    cout<<"----picvecstr:"<<picvecstr<<endl;
+    cout<<"----whats:"<<whats<<endl;
+    
+    pArgs = PyTuple_New(3);
+    PyTuple_SetItem(pArgs,0,Py_BuildValue("s",picvecstr));
+    PyTuple_SetItem(pArgs,1,Py_BuildValue("s",model.c_str()));
+    PyTuple_SetItem(pArgs,2,Py_BuildValue("s",whats.c_str()));
+	pRet = PyEval_CallObject(pfunc,pArgs);
 
 	//获取返回结果
 	char * cnn_res=NULL;
@@ -65,14 +82,14 @@ string  cnn_ocr(cv::Mat src,string whats)
 }
 
 //测试
-int main_ocrcnn()
+int main(int argc,char*argv[])
 {
 	Mat src = imread("samples/1.bmp", 0);
 	if (src.empty()){
 		cout << "load fail" << endl;
 		return 0;
 	}
-	cnn_ocr(src,"0123456789");
+	cnn_ocr(src,"ABCD");
 
 	return 0;
 

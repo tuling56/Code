@@ -16,12 +16,15 @@ import random
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-
 '''
 	模型训练和测试
 '''
-import tensorflow as tf
-from tensorflow.python.platform import gfile # 图模型文件
+try:
+    import tensorflow as tf
+    #from tensorflow.python.platform import gfile # 图模型文件
+except Exception,e:
+    print "\033[1;31m导入模块失败\033[0m",str(e)
+    sys.exit()
 
 def cnn_predict(vsamplestr,modulename,whats):
 	vsample=eval(vsamplestr) 				# 字符串形式的列表转列表
@@ -40,7 +43,7 @@ def cnn_predict(vsamplestr,modulename,whats):
 		
 		#单项预测
 		print "\033[1;31msingle predict\033[0m"
-		test=np.array(vsample)
+		test=np.array(vsample).reshape(1,len(vsample))
 		prev=sess.run(predict,feed_dict={x: test, y_: mark, keep_prob: 1.0})
 		prev_char= chr(prev.tolist().index(1)+ord(whats[0]))
 		print u"[prev]:",prev_char
@@ -48,7 +51,7 @@ def cnn_predict(vsamplestr,modulename,whats):
 	print "\033[1;31mpredict done!\033[0m"
 
 	if prev_char:
-		return prev_char;
+		return prev_char
 	else:
 		return "error"
 
@@ -57,16 +60,17 @@ def cnn_predict(vsamplestr,modulename,whats):
 '''
 	cpp调用接口
 '''
-def ocr_cnn_api(vsample,modulename,whats):
-	print "----[vsample]:",vsample
+def ocr_cnn_api(vsamplestr,modulename,whats):
+	print "----[vsample]:",vsamplestr
 	print "----[module]:",modulename
+	print "----[whats]:",whats
 	whats=list(whats)
-	prev_res=cnn_predict(vsample,modulename,whats)
-	return prev_res;
-
+	prev_res=cnn_predict(vsamplestr,modulename,whats)
+	return prev_res
 
 if __name__ == "__main__":
-	vsample=str([1]*784)
-	modulename="./models/model_0-9"
-	whats=list('0123456789')
-	cnn_predict(vsample,modulename,whats)
+	vsamplestr=str([1]*784)
+	modulename="./models/cnn/Model_ABCD"
+	whats=list('ABCD')
+	ocr_cnn_api(vsamplestr,modulename,whats)
+	#cnn_predict(vsamplestr,modulename,whats)

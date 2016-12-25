@@ -42,6 +42,8 @@ std::string getPath(std::string s);
 std::string getFilenameWithExt(std::string s);
 std::string getFilenameWithNoExt(std::string s);
 
+std::string getcurpath();
+
 std::string mat2vecstr(cv::Mat image);
 float bbOverlap(cv::Rect& box1, cv::Rect& box2);
 float angle(cv::Point pt1, cv::Point pt2, cv::Point pt0);

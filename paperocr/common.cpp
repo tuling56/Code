@@ -1,7 +1,6 @@
 #include "common.h"
 #include <stdlib.h>
-#include <numeric>      // std::accumulate  
-#include <algorithm>    // 
+#include <unistd.h>
 
 using namespace cv;
 using namespace std;
@@ -161,4 +160,19 @@ int vectorstat(vector<float> invec,vector<float> outvec)
 	outvec.push_back(minv);
 
 	return 0;
+}
+
+
+//获取当前路径
+string getcurpath()
+{
+	//当前路径获取，用于确定模块路径的位置
+	char *curpath_tmp;
+	curpath_tmp = (char *)malloc(60);
+	getcwd(curpath_tmp, 60);
+	//printf("当前执行程序路径:%s\n", curpath_tmp);
+	string curpath = curpath_tmp;
+	free(curpath_tmp);
+
+	return curpath;
 }

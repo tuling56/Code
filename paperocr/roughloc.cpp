@@ -168,7 +168,7 @@ int roughloc(Mat src, vector<SRPart>&rougharea)
 	Rect zgloc = Rect(markps[4].x,markps[4].y, xzloc.width, src.rows-markps[4].y);
 
 	SRPart sxuehao, sxuanze,szuguan;
-	sxuehao.what = "xuehao";
+	sxuehao.what = "xuehaoti";
 	sxuehao.where = xhloc;
 
 	sxuanze.what = "xuanzeti";

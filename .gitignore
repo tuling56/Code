@@ -1,0 +1,7 @@
+data/
+models/
+*.txt
+*.pyc
+online.h
+main
+unit_exec

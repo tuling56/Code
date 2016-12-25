@@ -12,9 +12,9 @@ using namespace std;
 */
 int bindTihaoAnswer(Mat demo, vector<Rect> &floodRects, string areaflag, vector<Rect> &vrectify)
 {
-	if (floodRects.size() % 2 != 0)	{
-		cout << "必须进行矫正"<< endl;
-	}
+	//if (floodRects.size() % 2 != 0)	{
+	//	cout << "选择题的个数不偶数匹配，必须进行矫正"<< endl;
+	//}
 
 	sort(floodRects.begin(), floodRects.end(), SortByWidth);
 	int minwidth = floodRects[0].width;
@@ -270,6 +270,7 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 
 
 	/***part2:对每个选择题图像进行识别（含多选的情况）***/
+	cout << "		[x] 选择题的的识别阶段(tess和cnn)" << endl;
 	tesseract::TessBaseAPI tess;
 	initOCR(tess);
 
@@ -277,7 +278,6 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 	bindTihaoAnswer(now, floodRects, "xuanzeti", recover);
 	sort(recover.begin(), recover.end(), SortByX);
 	
-
 	ostringstream select_tessres;
 	ostringstream select_cnnres;
 	string whats = "ABCD";
@@ -309,13 +309,13 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			Mat tihao = imgbak(now_tihao.where);
 			Mat answer = imgbak(now_answer.where);
 
-			//边界扩充
-			Mat tihaon, answern;
-			areaAdjust(tihao, tihaon);
-			areaAdjust(answer, answern);
+			
+			int conf = 0;
 
+			/*
+			Mat tihaon;
+			areaAdjust(tihao, tihaon);
 			string tihaovalue;
-			int conf=0;
 			vector<string> tihaocontent;
 			vector<float> tihaoconfidences;
 			tess_ocr(tess, tihaon, tihaovalue,conf,tihaocontent, tihaoconfidences);
@@ -323,11 +323,17 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			now_tihao.pic = tihao;
 			now_tihao.content = tihaovalue;
 			now_tihao.confidences = tihaoconfidences;
+			*/
+
+			Mat answern;
+			areaAdjust(answer, answern);
 
 			string answer_tessres;
 			vector<string> answer_tessres_detail;
 			vector<float> answer_tessres_detail_conf;
+			cout << "			[x] tess阶段" << endl;
 			tess_ocr(tess, answern, answer_tessres,conf,answer_tessres_detail, answer_tessres_detail_conf);
+			cout << "			[x] cnn阶段" << endl;
 			string answer_cnnres=cnn_ocr(answern,whats);
 			now_answer.pic = answer;
 			now_answer.content = answer_tessres;

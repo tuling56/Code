@@ -14,7 +14,7 @@ using namespace std;
  */
 int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 {
-	//根据学号的特点进行优化
+	//学号二维码精确定位
 	if (areaflag=="xuehaoti")
 	{
 		//二值化
@@ -78,11 +78,14 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 				part_xuehao.where = brect;
 				part_xuehao.pic = qr;
 				precise_boxes.push_back(part_xuehao);
+
+				imshow("xuehao_precise_loc", qr);
+				waitKey();
 			}
 		}
 	}
 
-	//选择题的精确定位已解决
+	//选择题精确定位
 	if( areaflag=="xuanzeti" )
 	{
 		Mat pyr,demo,timg, gray;
@@ -160,17 +163,14 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 	    }
 
 	    //效果展示
-	    if (1)	{
-			imshow(areaflag, demo);
-			waitKey();
-			destroyAllWindows();
-		}
-
+		imshow("select_precise_loc", demo);
+		waitKey();
 	}
 	
-	//要根据主观题的特点进行优化
+	//主观题精确定位
 	if (areaflag=="zuguanti")
 	{
+	
 		//二值化
 		Mat floodimg;
 		roughimg.copyTo(floodimg);
@@ -240,12 +240,20 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
 					part_zuguan.pic = roughimg(floodRect);
 					precise_boxes.push_back(part_zuguan);
 
+					//主观题的定位展示
+					imshow(part_zuguan.what, part_zuguan.pic);
+					waitKey();
+
 				}
 			}
 		}
 
-		imshow("demo", roughimg);
-		waitKey();
+		//在整个主观题的粗定位区域上显示精确定位的主观题位置
+		if (0){
+			imshow("demo", roughimg);
+			waitKey();
+		}
+		
 	}
 
 	return 0;

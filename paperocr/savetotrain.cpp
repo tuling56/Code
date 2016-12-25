@@ -61,10 +61,15 @@ int savetotrain(string outpath, vector<SLocAnswer> locanswers)
 	for (vector<SLocAnswer>::iterator it = locanswers.begin(); it != locanswers.end(); it++)
 	{
 		//创建子目录(以识别结果为准)
-		if (NULL == opendir(it->what.c_str())){
-			mkdir(outpath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		string subdir = outpath + "/" + it->content;
+		if (NULL == opendir(subdir.c_str())){
+			mkdir(subdir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		}
-		string filename = outpath +"/"+it->what+"/"+it->what + ".png";
+		ostringstream idstr;
+		Rect loc = it->where;
+		idstr <<"_"<<loc.x << "." << loc.y << "." << loc.width << "." << loc.height;
+		string id = idstr.str();
+		string filename=subdir+"/"+it->content +id+ ".png";
 		imwrite(filename, it->pic);
 	}
 

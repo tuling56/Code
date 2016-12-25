@@ -42,7 +42,11 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 	float t = (float)getTickCount();
 	tesseract::TessBaseAPI tess;
 	const char *language = "eng";
-	const char* datapath = "/usr/local/share/tessdata";
+	
+	string curpath = getcurpath();
+	string modelpath = curpath + "/parts/models";
+	const char* datapath = modelpath.c_str();
+	
 	int oemode = 3;
 	int psmode = 8;
 	if (tess.Init(datapath, language, (tesseract::OcrEngineMode)oemode)){
@@ -176,7 +180,11 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 	float t = (float)getTickCount();
 	tesseract::TessBaseAPI tess;
 	const char *language = "eng";
-	const char* datapath = "/usr/local/share";
+	
+	string curpath = getcurpath();
+	string modelpath = curpath + "/parts/models";
+	const char* datapath = modelpath.c_str();
+	
 	int oemode = 3;
 	int psmode = 8;
 	if (tess.Init(datapath, language, (tesseract::OcrEngineMode)oemode)){
@@ -327,7 +335,9 @@ int initOCR(tesseract::TessBaseAPI &tess)
 
 	//tesseract::TessBaseAPI tess;
 	const char *language = "eng";
-	const char* datapath = "/usr/local/share";
+	string curpath = getcurpath();
+	string modelpath = curpath + "/parts/models";
+	const char* datapath = modelpath.c_str();
 	int oemode = 3;
 	int psmode = 8;
 	if (tess.Init(datapath, language, (tesseract::OcrEngineMode)oemode)){
@@ -350,7 +360,7 @@ int initOCR(tesseract::TessBaseAPI &tess)
 			cout << "\t" << char_whitelist << endl;
 	}
 	t = ((float)getTickCount() - t) / getTickFrequency();
-	cout << "init cost time:" << t << "(s)" << endl;
+	//cout << "init cost time:" << t << "(s)" << endl;
 
 	return 0;
 
@@ -440,8 +450,8 @@ int tess_ocr(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vect
 		//putText(src, component_texts[j], textloc, FONT_HERSHEY_SIMPLEX, scale_font, Scalar(255, 0, 0), (int)(2 * scale_font));
 	}
 	t = ((float)getTickCount() - t) / getTickFrequency();
-	cout << "cost time:" << t << "(s)" << endl;
-	cout << "---------------[END]------------------" << endl;
+	//cout << "cost time:" << t << "(s)" << endl;
+	//cout << "---------------[END]------------------" << endl;
 
 	if (0){
 		imshow("result", src);

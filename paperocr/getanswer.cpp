@@ -14,7 +14,7 @@ string areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs
 {
 	CV_Assert( !preciseimg.empty() );
 	
-	if (areaflag=="xuehao")	{			//调用python接口返回学号
+	if (areaflag=="xuehaoti")	{		
 		//cout << "学号区" << endl;
 		string xuehaoinfo = xuehaotiProcess(preciseimg);
 		return xuehaoinfo;
