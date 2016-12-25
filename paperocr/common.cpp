@@ -13,14 +13,14 @@ string mat2vecstr(Mat image)
 	}
 
 	//转化和归一化
-	/*
-	image.convertTo(image, CV_32FC3);
-	float min = 0;
-	float max = 0;
+	image.convertTo(image, CV_32FC1);
+	double min = 0;
+	double max = 0;
 	minMaxIdx(image, &min, &max);
-	image = (image-min) / (max - 50);
-	*/
-	threshold(image, image, 50, 1, THRESH_BINARY_INV);
+	image = (image-min) / (max - min);
+
+	//二值化
+	//threshold(image, image, 50, 1, THRESH_BINARY_INV);
 
 	char tmp[6];
 
@@ -30,7 +30,7 @@ string mat2vecstr(Mat image)
 	{
 		for (int j = 0; j < image.cols; j++)
 		{
-			sprintf(tmp, "%d", image.at<uchar>(j, i));
+			sprintf(tmp, "%5.4f", image.at<float>(j, i));
 			if (i == image.rows - 1 && j == image.cols - 1)
 				res << tmp;
 			else

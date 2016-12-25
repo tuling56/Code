@@ -21,10 +21,10 @@ sys.setdefaultencoding('utf-8')
 '''
 try:
     import tensorflow as tf
-    #from tensorflow.python.platform import gfile # 图模型文件
+    from tensorflow.python.platform import gfile # 图模型文件
 except Exception,e:
     print "\033[1;31m导入模块失败\033[0m",str(e)
-    sys.exit()
+    #sys.exit()
 
 def cnn_predict(vsamplestr,modulename,whats):
 	vsample=eval(vsamplestr) 				# 字符串形式的列表转列表
@@ -32,7 +32,7 @@ def cnn_predict(vsamplestr,modulename,whats):
 	prev_char=""
 	with tf.Session() as sess:
 		new_saver = tf.train.import_meta_graph(modulename+'.meta')			#恢复图模型
-		new_saver.restore(sess,modulename )									#恢复数据
+		new_saver.restore(sess,modulename)									#恢复数据
 		# tf.get_collection() returns a list. In this example we only want the first one.
 		predict=tf.get_collection('predict')[0]
 		x=tf.get_collection('x')[0]
