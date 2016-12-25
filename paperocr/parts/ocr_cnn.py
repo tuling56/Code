@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/Users/yjm/Applications/anaconda/bin/python
 # -*- coding: utf-8 -*-
 '''
 	Fun:cnn模型训练和测试框架
@@ -6,6 +6,7 @@
 	Date:2016/9/19
 	Author:tuling56
 	功能：在原有的基础上进行模型加载和保存测试
+        #!/usr/bin/env python
 '''
 import os
 import sys
