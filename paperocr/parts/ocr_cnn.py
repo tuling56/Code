@@ -1,4 +1,4 @@
-#!/Users/yjm/Applications/anaconda/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
 	Fun:cnn模型训练和测试框架
@@ -6,6 +6,7 @@
 	Date:2016/9/19
 	Author:tuling56
 	功能：在原有的基础上进行模型加载和保存测试
+        #!/Users/yjm/Applications/anaconda/bin/python
         #!/usr/bin/env python
 '''
 import os
@@ -18,11 +19,11 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 '''
-	模型训练和测试
+	模型加载和预测
 '''
 try:
     import tensorflow as tf
-    from tensorflow.python.platform import gfile # 图模型文件
+    from tensorflow.python.platform import gfile                # 图模型文件
 except Exception,e:
     print "\033[1;31m导入模块失败\033[0m",str(e)
     #sys.exit()
@@ -62,12 +63,13 @@ def cnn_predict(vsamplestr,modulename,whats):
 	cpp调用接口
 '''
 def ocr_cnn_api(vsamplestr,modulename,whats):
-	print "----[vsample]:",vsamplestr
-	print "----[module]:",modulename
-	print "----[whats]:",whats
+	print ">>>[vsample]:",vsamplestr
+	print ">>>[module]:",modulename
+	print ">>>[whats]:",whats
 	whats=list(whats)
 	prev_res=cnn_predict(vsamplestr,modulename,whats)
 	return prev_res
+
 
 if __name__ == "__main__":
 	vsamplestr=str([1]*784)
