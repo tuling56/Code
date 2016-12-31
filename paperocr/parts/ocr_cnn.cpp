@@ -57,15 +57,15 @@ string  cnn_ocr(cv::Mat src,string whats)
     }
 
     //传递三个参数进去
-	cout<<"----cnnpypath:"<<cnnpypath<<endl;
-    cout<<"----modelname:"<<model<<endl;
-    cout<<"----picvecstr:"<<picvecstr<<endl;
-    cout<<"----whats:"<<whats<<endl;
+	//cout<<"[cpp]cnnpypath:"<<cnnpypath<<endl;
+    cout<<"[cpp]picvecstr:"<<picvecstr<<endl;
+    cout<<"[cpp]modelname:"<<model<<endl;
+    cout<<"[cpp]whats:"<<whats<<endl;
 
     pArgs = PyTuple_New(3);
-    PyTuple_SetItem(pArgs,0,Py_BuildValue("(s)",picvecstr.c_str()));
-    PyTuple_SetItem(pArgs,1,Py_BuildValue("(s)",model.c_str()));
-    PyTuple_SetItem(pArgs,2,Py_BuildValue("(s)",whats.c_str()));
+    PyTuple_SetItem(pArgs,0,Py_BuildValue("s",picvecstr.c_str()));
+    PyTuple_SetItem(pArgs,1,Py_BuildValue("s",model.c_str()));
+    PyTuple_SetItem(pArgs,2,Py_BuildValue("s",whats.c_str()));
 	pRet = PyEval_CallObject(pfunc,pArgs);
 
 	//获取返回结果

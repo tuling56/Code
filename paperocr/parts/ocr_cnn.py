@@ -11,12 +11,14 @@
 '''
 import os
 import sys
-import re
 import numpy as np
 import random
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+if not hasattr(sys, 'argv'):
+        sys.argv  = ['']
 
 '''
 	模型加载和预测
@@ -26,15 +28,16 @@ try:
     from tensorflow.python.platform import gfile                # 图模型文件
 except Exception,e:
     print "\033[1;31m导入模块失败\033[0m",str(e)
-    #sys.exit()
+    sys.exit()
 
 def cnn_predict(vsamplestr,modulename,whats):
 	vsample=eval(vsamplestr) 				# 字符串形式的列表转列表
 	print "\033[1;31mload model>>>\033[0m"
 	prev_char=""
 	with tf.Session() as sess:
+                print "恢复:",modulename+'.meta'
 		new_saver = tf.train.import_meta_graph(modulename+'.meta')			#恢复图模型
-		new_saver.restore(sess,modulename)									#恢复数据
+		new_saver.restore(sess,modulename)						#恢复数据
 		# tf.get_collection() returns a list. In this example we only want the first one.
 		predict=tf.get_collection('predict')[0]
 		x=tf.get_collection('x')[0]
@@ -58,7 +61,6 @@ def cnn_predict(vsamplestr,modulename,whats):
 		return "error"
 
 
-
 '''
 	cpp调用接口
 '''
@@ -75,5 +77,5 @@ if __name__ == "__main__":
 	vsamplestr=str([1]*784)
 	modulename="./models/cnn/Model_ABCD"
 	whats=list('ABCD')
-	ocr_cnn_api(vsamplestr,modulename,whats)
+	#ocr_cnn_api(vsamplestr,modulename,whats)
 	#cnn_predict(vsamplestr,modulename,whats)

@@ -91,3 +91,25 @@ F-->|这条支线删除_直接在cpp里完成|zbar_xuehao_scan.py
   > 待做
   >
   > > 1，训练图像细化，二值化（01），模型的重修训练（整体都需要细化？）
+
+- 2016年12月31日
+
+  > 问题：
+  >
+  > Exception TypeError: 'function takes at least one argument' in <module 'threading' from '/usr/lib64/python2.7/threading.pyc'> ignored
+  >
+  > 解决办法：[参考](https://bitbucket.org/anthony_tuininga/cx_freeze/issues/97/attributeerror-module-object-has-no)
+  >
+  > ```python
+  > # 在文件开始添加
+  > if not hasattr(sys, 'argv'):
+  >     sys.argv  = ['']
+  > ```
+  >
+  > 待做：
+  >
+  > > 能不能将tensorflow的调用部分也用c++完成，不再调用python模块，完成一统
+
+## 资料参考
+
+[极客学院Tensorflow教程](http://wiki.jikexueyuan.com/project/tensorflow-zh/get_started/basic_usage.html)
