@@ -62,7 +62,9 @@ string  singleproc(string filename,string resTrainpath)
 
 	//结果文件保存以再训练
 	savetotrain(resTrainpath,loc_answer);
-	string fres=savetojson(filename,xuehao,loc_answer);
+	
+    //最终json格式结果返回
+    string fres=savetojson(filename,xuehao,loc_answer);
 
 	return fres;
 }

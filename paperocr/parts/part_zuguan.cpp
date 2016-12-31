@@ -12,7 +12,8 @@ using namespace std;
  */
 string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 {
-	CV_Assert(!preciseimg.empty());
+	cout<<areaflag<<" 的识别"<<endl;
+    CV_Assert(!preciseimg.empty());
 	RNG rng = theRNG();
 
 	//图像漫水和分割（先二值化再漫水）
@@ -91,7 +92,7 @@ string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs
 	ostringstream cnn_res;
 	for (vector<SLocAnswer>::iterator it = locs.begin(); it!= locs.end(); it++)
 	{
-		string res=cnn_ocr(it->pic,whats);
+		string res="cnn结果";//cnn_ocr(it->pic,whats);
 		it->content = res;
 		cnn_res << res;
 	}
@@ -99,6 +100,7 @@ string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs
 	string cnnocr = cnn_res.str();
 
 	/***part2:tess识别和保存*****/
+    cout<<">>>主观题的tess识别"<<endl;
 	tesseract::TessBaseAPI tess;
 	initOCR(tess);
 

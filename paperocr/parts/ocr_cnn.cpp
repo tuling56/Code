@@ -36,7 +36,7 @@ string  cnn_ocr(cv::Mat src,string whats)
 
 	string picvecstr = mat2vecstr(src);
 
-	cout<<"CNN识别阶段:"<<endl;
+	//cout<<"CNN识别阶段:"<<endl;
 	Py_Initialize();
     //PySys_SetArgv(argc, argv);
     PyRun_SimpleString("import sys");
@@ -58,9 +58,9 @@ string  cnn_ocr(cv::Mat src,string whats)
 
     //传递三个参数进去
 	//cout<<"[cpp]cnnpypath:"<<cnnpypath<<endl;
-    cout<<"[cpp]picvecstr:"<<picvecstr<<endl;
-    cout<<"[cpp]modelname:"<<model<<endl;
-    cout<<"[cpp]whats:"<<whats<<endl;
+    //cout<<"[cpp]picvecstr:"<<picvecstr<<endl;
+    //cout<<"[cpp]modelname:"<<model<<endl;
+    //cout<<"[cpp]whats:"<<whats<<endl;
 
     pArgs = PyTuple_New(3);
     PyTuple_SetItem(pArgs,0,Py_BuildValue("s",picvecstr.c_str()));
@@ -83,6 +83,7 @@ string  cnn_ocr(cv::Mat src,string whats)
 }
 
 //测试
+/*
 int main()
 {
 	Mat src = imread("samples/1.bmp", 0);
@@ -95,3 +96,4 @@ int main()
 	return 0;
 
 }
+*/

@@ -270,7 +270,7 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 
 
 	/***part2:对每个选择题图像进行识别（含多选的情况）***/
-	cout << "		[x] 选择题的的识别阶段(tess和cnn)" << endl;
+	cout << "[x] 选择题的的识别阶段(tess和cnn)" << endl;
 	tesseract::TessBaseAPI tess;
 	initOCR(tess);
 
@@ -287,35 +287,29 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 	{
 		rectangle(now, *itrect, Scalar(0, 0, 255), 1, CV_AA);
 		//cout << "curponit:\tx:" << itrect->tl().x << " y:" << itrect->tl().y << endl;
-
 		if (n % 2 == 0)
 		{
-			SLocAnswer now_answer, now_tihao;
-			ostringstream s1, s2;
-			s1 << areaflag << "_tihao_" << j;
-			s2 << areaflag << "_answer_" << j;
-
-			now_tihao.what = s1.str();
-			now_answer.what = s2.str();
-
-			now_tihao.where = (itrect - 1)->tl().y < itrect->tl().y ? *(itrect - 1) : *itrect;
-			now_answer.where = (itrect - 1)->tl().y > itrect->tl().y ? *(itrect - 1) : *itrect;
-
-			//矩形缩小,避免边缘干扰
-			//Size size(2, 2);
-			//now_tihao.where = Rect(now_tihao.where.tl() + Point(1, 1), now_tihao.where.br() - Point(1, 1));
-			//now_answer.where = Rect(now_answer.where.tl() + Point(1, 1), now_answer.where.br() - Point(1, 1));
-
-			Mat tihao = imgbak(now_tihao.where);
-			Mat answer = imgbak(now_answer.where);
-
 			
 			int conf = 0;
 
 			/*
+			SLocAnswer now_tihao;
+			ostringstream s1;
+			s1 << areaflag << "_tihao_" << j;
+
+			now_tihao.what = s1.str();
+			now_tihao.where = (itrect - 1)->tl().y < itrect->tl().y ? *(itrect - 1) : *itrect;
+
+			//缩边
+			//Size size(2, 2);
+			//now_tihao.where = Rect(now_tihao.where.tl() + Point(1, 1), now_tihao.where.br() - Point(1, 1));
+
+			Mat tihao = imgbak(now_tihao.where);
+
 			Mat tihaon;
 			areaAdjust(tihao, tihaon);
-			string tihaovalue;
+			
+            string tihaovalue;
 			vector<string> tihaocontent;
 			vector<float> tihaoconfidences;
 			tess_ocr(tess, tihaon, tihaovalue,conf,tihaocontent, tihaoconfidences);
@@ -323,7 +317,23 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			now_tihao.pic = tihao;
 			now_tihao.content = tihaovalue;
 			now_tihao.confidences = tihaoconfidences;
+			
+            locs.push_back(now_tihao);
 			*/
+
+
+			SLocAnswer now_answer;
+			ostringstream s2;
+			s2 << areaflag << "_answer_" << j;
+		
+			now_answer.what = s2.str();
+			now_answer.where = (itrect - 1)->tl().y > itrect->tl().y ? *(itrect - 1) : *itrect;
+
+			//矩形缩小,避免边缘干扰
+			//Size size(2, 2);
+			//now_answer.where = Rect(now_answer.where.tl() + Point(1, 1), now_answer.where.br() - Point(1, 1));
+
+			Mat answer = imgbak(now_answer.where);
 
 			Mat answern;
 			areaAdjust(answer, answern);
@@ -331,15 +341,14 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			string answer_tessres;
 			vector<string> answer_tessres_detail;
 			vector<float> answer_tessres_detail_conf;
-			cout << "			[x] tess阶段" << endl;
+			cout << "[x] tess阶段" << endl;
 			tess_ocr(tess, answern, answer_tessres,conf,answer_tessres_detail, answer_tessres_detail_conf);
-			cout << "			[x] cnn阶段" << endl;
-			string answer_cnnres=cnn_ocr(answern,whats);
+			cout << "[x] cnn阶段" << endl;
+			string answer_cnnres="cnn结果"; //cnn_ocr(answern,whats);
 			now_answer.pic = answer;
 			now_answer.content = answer_tessres;
 			now_answer.confidences = answer_tessres_detail_conf;
 
-			locs.push_back(now_tihao);
 			locs.push_back(now_answer);
 
 			select_tessres << answer_tessres << ",";
@@ -353,6 +362,7 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			putText(preciseimg, answer_tessres, now_answer.where.tl(), FONT_HERSHEY_SIMPLEX, scale_font, Scalar(0, 0, 255), (int)(2 * scale_font));
 
 			j++;
+            cout<<"-----------------"<<endl; //标注一个选择题项的识别完成分割
 		}
 		n++;
 	}

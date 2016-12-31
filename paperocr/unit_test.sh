@@ -33,4 +33,5 @@ function test_mac()
 test_linux
 
 [ -f ./unit_exec ]&&echo -e "\033[1;31m运行测试:\033[0m"
-./unit_exec 
+./unit_exec && rm -f ./unit_exec
+

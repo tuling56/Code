@@ -90,7 +90,7 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 	if (output.size()==0){
 		cout << "whole OCR result：[]"<<endl;
 		tess.Clear();
-		cout << "---------------[END]------------------" << endl;
+		//cout << "---------------[END]------------------" << endl;
 		return 0;
 	}
 	else{
@@ -241,7 +241,7 @@ int ocranswer_seqs(vector<Mat> srcs, vector<string> & outputs, vector<vector<str
 
 		if (output.size() == 0){
 			cout << "whole OCR result：[]" << endl;
-			cout << "---------------[END]------------------" << endl;
+			//cout << "---------------[END]------------------" << endl;
 			continue;
 		}
 		
@@ -387,7 +387,7 @@ int tess_ocr(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vect
 	}
 
 	if (output.size() == 0){
-		cout << "整体的识别结果是：[空]" << endl;
+		cout << "whole ocr result：[空]" << endl;
 		//tess.Clear();
 		cout << "---------------[END]------------------" << endl;
 		return 0;

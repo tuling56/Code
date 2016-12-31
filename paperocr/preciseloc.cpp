@@ -9,7 +9,7 @@ using namespace std;
 /* 功能：精确定位
  * 输入：粗定位图像，该区域标识
  * 输出：细定位的结果（相对于粗定位的位置）
- * 返回：精确定位到的结果区域的个数
+ * 返回：精确定位到的结果区域的个数（会产生多个主观题区域）
  *
  */
 int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
@@ -235,6 +235,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
  					SLocAnswer part_zuguan;
 					ostringstream s1;
 					s1 << areaflag<<"_" << num++;
+					cout<<"now"<<s1.str()<<endl;
 					part_zuguan.what = s1.str();
 					part_zuguan.where = floodRect;
 					part_zuguan.pic = roughimg(floodRect);

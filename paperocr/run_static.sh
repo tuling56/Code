@@ -28,7 +28,7 @@ fi
 if [ "$test" == "-t" ];then
 	echo -e "\e[1;31m运行测试试卷:\e[0m"
 	echo "./main ./data/img072.jpg"
-	./main ./data/img072.jpg
+	./main ./data/img072.jpg && rm -f ./main
 
 	#echo -e "\e[1;31m运行结果:\e[0m"
 	#ls -lh ./result/img072

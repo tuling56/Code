@@ -61,7 +61,13 @@ int savetotrain(string outpath, vector<SLocAnswer> locanswers)
 	for (vector<SLocAnswer>::iterator it = locanswers.begin(); it != locanswers.end(); it++)
 	{
 		//创建子目录(以识别结果为准)
-		string subdir = outpath + "/" + it->content;
+        string contentdir;
+        if(it->content=="")
+            contentdir="null";
+        else
+            contentdir=it->content;
+            
+		string subdir = outpath + "/" + contentdir;
 		if (NULL == opendir(subdir.c_str())){
 			mkdir(subdir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		}

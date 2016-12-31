@@ -1,7 +1,9 @@
 data/
 models/
+totrain/
 *.txt
 *.pyc
 online.h
 main
 unit_exec
+paperocr/*.json
