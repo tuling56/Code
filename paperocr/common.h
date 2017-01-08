@@ -25,14 +25,27 @@ struct SRPart{
 };
 
 
+struct Sinfo{
+	std::string what;					//保留字段（用以扩展）
+	std::string content; 				//识别的内容
+	float confidence;					//识别的置信率（在采用tess的时候才有）
+	cv::Mat pic;						//待训练图像的
+}
+
+
 //定义答题位置和答案（细定位和识别）
 struct SLocAnswer{
 	std::string what;			        //意义		
 	cv::Rect where;					    //位置
 	cv::Mat pic;						//图像
 	std::string content;				//图像整体识别结果
+	
+	std::vector<Sinfo> dinfo;			//存储详细的信息(结构体嵌套)
+
+	std::vector<cv::Mat> pics;			//图像内部每个图像的
 	std::vector<std::string> contents;	//图像内部每个字符的识别结果
-	std::vector<float> confidences;    //图像内部每个字符的识别置信率(扩充多选答案的时候)
+	std::vector<float> confidences;     //图像内部每个字符的识别置信率(扩充多选答案的时候)
+
 };
 
 
