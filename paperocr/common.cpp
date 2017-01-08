@@ -5,21 +5,21 @@
 using namespace cv;
 using namespace std;
 
-//mat图像向量化
+//mat脥录脧帽脧貌脕驴禄炉
 string mat2vecstr(Mat image)
 {
 	if (image.channels() == 3){
 		cvtColor(image, image, CV_BGR2GRAY);
 	}
 
-	//转化和归一化
+	//脳陋禄炉潞脥鹿茅脪禄禄炉
 	image.convertTo(image, CV_32FC1);
 	double min = 0;
 	double max = 0;
 	minMaxIdx(image, &min, &max);
 	image = (image-min) / (max - min);
 
-	//二值化
+	//露镁脰碌禄炉
 	//threshold(image, image, 50, 1, THRESH_BINARY_INV);
 
 	char tmp[6];
@@ -42,7 +42,7 @@ string mat2vecstr(Mat image)
 	return res.str();
 }
 
-//功能：判断两个矩形是否相交，和重叠率
+//鹿娄脛脺拢潞脜脨露脧脕陆赂枚戮脴脨脦脢脟路帽脧脿陆禄拢卢潞脥脰脴碌镁脗脢
 float bbOverlap(Rect& box1, Rect& box2)
 {
 	if (box1.x > box2.x + box2.width) { return 0.0; }
@@ -60,9 +60,9 @@ float bbOverlap(Rect& box1, Rect& box2)
 
 	float ovlap1 = intersection / area1;
 	float ovlap2 = intersection / area2;
-	float ovlap3 = intersection / (area1 + area2 - intersection); //重叠面积占总面积的比
+	float ovlap3 = intersection / (area1 + area2 - intersection); //脰脴碌镁脙忙禄媒脮录脳脺脙忙禄媒碌脛卤脠
 
-	//最大的重叠率返回
+	//脳卯麓贸碌脛脰脴碌镁脗脢路碌禄脴
 	float ovlapmax = ovlap1;
 	if (ovlap2 > ovlapmax)
 		ovlapmax = ovlap2;
@@ -73,7 +73,7 @@ float bbOverlap(Rect& box1, Rect& box2)
 
 }
 
-// 计算两条线段的夹角:pt0->pt1 and from pt0->pt2
+// 录脝脣茫脕陆脤玫脧脽露脦碌脛录脨陆脟:pt0->pt1 and from pt0->pt2
 float angle(Point pt1, Point pt2, Point pt0)
 {
 	float dx1 = pt1.x - pt0.x;
@@ -84,10 +84,10 @@ float angle(Point pt1, Point pt2, Point pt0)
 }
 
 
-// 功能：自定义排序函数系列
-bool SortByX(const Rect &p1, const Rect &p2)//注意：本函数的参数的类型一定要与vector中元素的类型一致  
+// 鹿娄脛脺拢潞脳脭露篓脪氓脜脜脨貌潞炉脢媒脧碌脕脨
+bool SortByX(const Rect &p1, const Rect &p2)//脳垄脪芒拢潞卤戮潞炉脢媒碌脛虏脦脢媒碌脛脌脿脨脥脪禄露篓脪陋脫毛vector脰脨脭陋脣脴碌脛脌脿脨脥脪禄脰脗  
 {
-	return p1.tl().x < p2.tl().x;			//升序排列
+	return p1.tl().x < p2.tl().x;			//脡媒脨貌脜脜脕脨
 
 	if (abs(p1.tl().x - p2.tl().x) < p1.width / 4){
 		return p1.tl().x < p2.tl().x;
@@ -121,17 +121,18 @@ bool SortBySx(const SLocAnswer &s1, const SLocAnswer &s2)
 {
 	Rect rs1 = s1.where;
 	Rect rs2 = s2.where;
-	return rs1.tl().x < rs2.tl().x;			//升序排列
+	return rs1.tl().x < rs2.tl().x;			//脡媒脨貌脜脜脕脨
 }
 
-//vector<num>统计
-int vectorstat(vector<float> invec,vector<float> outvec)
+//vector<num>脥鲁录脝
+int vectorstat(vector<float>  invec,vector<float> & outvec)
 {
 	float sum = 0;
 	float minv = 0;
 	float maxv = 0;
 	for (vector<float>::iterator it = invec.begin(); it != invec.end(); it++)
 	{
+		cout<<"now"<<*it<<endl;
 		sum = sum + *it;
 		if (*it > maxv)
 			maxv = *it;
@@ -141,7 +142,7 @@ int vectorstat(vector<float> invec,vector<float> outvec)
 	float mean = sum / invec.size();
 
 
-	//计算方差
+	//录脝脣茫路陆虏卯
 	float acsum = 0;
 	for (vector<float>::iterator it = invec.begin(); it != invec.end(); it++)
 	{
@@ -151,7 +152,7 @@ int vectorstat(vector<float> invec,vector<float> outvec)
 
 
 
-	//返回
+	//路碌禄脴
 	outvec.clear();
 	outvec.push_back(sum);
 	outvec.push_back(mean);
@@ -159,18 +160,20 @@ int vectorstat(vector<float> invec,vector<float> outvec)
 	outvec.push_back(maxv);
 	outvec.push_back(minv);
 
+	cout<<"sum"<<sum<<"mean"<<mean<<"stdev"<<stdev<<"maxv"<<maxv<<"minv"<<minv<<endl;
+
 	return 0;
 }
 
 
-//获取当前路径
+//禄帽脠隆碌卤脟掳脗路戮露
 string getcurpath()
 {
-	//当前路径获取，用于确定模块路径的位置
+	//碌卤脟掳脗路戮露禄帽脠隆拢卢脫脙脫脷脠路露篓脛拢驴茅脗路戮露碌脛脦禄脰脙
 	char *curpath_tmp;
 	curpath_tmp = (char *)malloc(60);
 	getcwd(curpath_tmp, 60);
-	//printf("当前执行程序路径:%s\n", curpath_tmp);
+	//printf("碌卤脟掳脰麓脨脨鲁脤脨貌脗路戮露:%s\n", curpath_tmp);
 	string curpath = curpath_tmp;
 	free(curpath_tmp);
 

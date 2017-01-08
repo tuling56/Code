@@ -15,24 +15,26 @@ string areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs
 	CV_Assert( !preciseimg.empty() );
 	
 	if (areaflag=="xuehaoti")	{		
-		//cout << "学号区" << endl;
+		cout << "****学号区识别*****" << endl;
 		string xuehaoinfo = xuehaotiProcess(preciseimg);
-		return xuehaoinfo;
+		if (xuehaoinfo=="")
+			return "xuehaoerror";
+		else
+			return xuehaoinfo;
 	}
 	else if (areaflag=="xuanzeti"){
-		selectProcess(preciseimg, areaflag, locs);
+		cout << "****选择题区识别*****" << endl;
+		selectProcess(preciseimg, areaflag, locs);    //此处选择题不返回识别结果
 	}
 	else if (areaflag.find("zuguanti_")!=string::npos){
-		cout << "解答题区" << endl;
-		zuguantiProcess(preciseimg, areaflag, locs);	//处理的是每个主观题
+		cout << "****解答题区识别******" << endl;
+		string zuguaninfo=zuguantiProcess(preciseimg, areaflag, locs);	//处理的是每个主观题（小主观）
+		return zuguaninfo;
 	}
 	else{
-		//cout << "非定义区域" << endl;
-		//do something
+		cout << "非定义的识别区域" << endl;
 		return "";
 	}
-
-	return "";	
 }
 
 
@@ -55,11 +57,9 @@ string getanswer(Mat preciseimg,string areaflag,vector<SLocAnswer> &answerloc)
     
 	
 	//调用各个模块的识别
-	string xuehao=areaDecomposeOCR(preciseimg,areaflag,answerloc);
-	if (xuehao == "")
-		return "xuehaoerror";
+	string ocrinfo=areaDecomposeOCR(preciseimg,areaflag,answerloc);
 
-	return xuehao;
+	return ocrinfo;
 }
 
 

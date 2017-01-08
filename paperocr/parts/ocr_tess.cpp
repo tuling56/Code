@@ -95,7 +95,7 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 	}
 	else{
 		cout << "whole OCR result(confidence:"<<conf<<"):" << output << endl;
-		cout << "details as follow:>>>" << endl;
+		//cout << "details as follow:>>>" << endl;
 	}
 
 	//单区域多识别项问题
@@ -131,7 +131,7 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 	//vector<float> detect_confidences;
 	for (int j = 0; j < (int)component_texts.size(); j++)
 	{
-		cout << "curcomponent = " << component_texts[j] << "\tcurconfidence = " << component_confidences[j] << endl;
+		//cout << "curcomponent = " << component_texts[j] << "\tcurconfidence = " << component_confidences[j] << endl;
 		if (((component_texts[j].size() < 2) && (component_confidences[j] < min_confidence1))||
 			((component_texts[j].size() < 4) && (component_confidences[j] < min_confidence2)))
 				continue;
@@ -147,15 +147,15 @@ int ocranswer(Mat src, string & output, vector<string> &detect_words,vector<floa
 		Point2d textloc = component_rects[j].tl() - Point(1, 1);
 		textloc.x = textloc.x > 0 ? textloc.x : 0;
 		textloc.y = textloc.y > 0 ? textloc.y : 0;
-		cout << "high confidence elem:" << component_texts[j];
-		cout << " confidence:" << component_confidences[j] << endl;
+		//cout << "high confidence elem:" << component_texts[j];
+		//cout << " confidence:" << component_confidences[j] << endl;
 		//putText(src, component_texts[j], textloc, FONT_HERSHEY_SIMPLEX, scale_font, Scalar(255, 0, 0), (int)(2 * scale_font));
 	}
 	tess.Clear();	
 	
 	t = ((float)getTickCount() - t) / getTickFrequency();
-	cout << " ocr cost time:" << t;
-	cout << "(s)" << endl;
+	//cout << " ocr cost time:" << t;
+	//cout << "(s)" << endl;
 	cout << "---------------[END]------------------" << endl;
 
 	if (0){
@@ -389,12 +389,12 @@ int tess_ocr(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vect
 	if (output.size() == 0){
 		cout << "whole ocr result：[空]" << endl;
 		//tess.Clear();
-		cout << "---------------[END]------------------" << endl;
+		//cout << "---------------[END]------------------" << endl;
 		return 0;
 	}
 	else{
 		cout << "whole OCR result(confidence:" << conf << "):" << output << endl;
-		cout << "detail as follow：>>>" << endl;
+		//cout << "detail as follow：>>>" << endl;
 	}
 
 	//整体识别的细分（）
@@ -426,11 +426,11 @@ int tess_ocr(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vect
 	float scale_font = (float)(abs(2 - scale_img)) / 1.2f;
 	float min_confidence1 = 41.f, min_confidence2 = 60.f;
 
-	//vector<string> detect_words;
-	//vector<float> detect_confidences;
+	detect_words.clear();
+	detect_confidences.clear();
 	for (int j = 0; j < (int)component_texts.size(); j++)
 	{
-		cout << "curcomponent = " << component_texts[j] << "\tcurconfidence = " << component_confidences[j] << endl;
+		//cout << "curcomponent = " << component_texts[j] << "\tcurconfidence = " << component_confidences[j] << endl;
 		if (((component_texts[j].size() < 2) && (component_confidences[j] < min_confidence1)) ||
 			((component_texts[j].size() < 4) && (component_confidences[j] < min_confidence2)))
 			continue;
@@ -446,7 +446,7 @@ int tess_ocr(tesseract::TessBaseAPI &tess, Mat src,string &output,int &conf,vect
 		Point2d textloc = component_rects[j].tl() - Point(1, 1);
 		textloc.x = textloc.x > 0 ? textloc.x : 0;
 		textloc.y = textloc.y > 0 ? textloc.y : 0;
-		cout << "high confidence elem:" << component_texts[j] << "\tconfidence:" << component_confidences[j] << endl;
+		//cout << "high confidence elem:" << component_texts[j] << "\tconfidence:" << component_confidences[j] << endl;
 		//putText(src, component_texts[j], textloc, FONT_HERSHEY_SIMPLEX, scale_font, Scalar(255, 0, 0), (int)(2 * scale_font));
 	}
 	t = ((float)getTickCount() - t) / getTickFrequency();

@@ -48,13 +48,16 @@ string  singleproc(string filename,string resTrainpath)
 		string areaflag = itr->what;	
 		Mat rough = src(itr->where);
 		preciseloc(rough,areaflag,precise_area);
+		if (areaflag=="zuguanti")
+			cout<<"主观题区域的个数"<<precise_area.size()<<endl;
 		
 		cout << "[step2]: " << itr->what << " ocr" << endl;
 
 		for (vector<SLocAnswer>::iterator itp = precise_area.begin(); itp != precise_area.end();itp++)
 		{
+			cout<<"----"<<itp->what<<"--------"<<endl;
 			Mat precise = rough(itp->where);
-			xuehao=getanswer(precise,areaflag,loc_answer);
+			xuehao=getanswer(precise,itp->what,loc_answer);
 			if (xuehao == "xuehaoerror") break;
 		}
 	}

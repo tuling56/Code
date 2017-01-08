@@ -34,7 +34,7 @@ string xuehaotiProcess(Mat imageGray)
 	for (; symbol != imageZbar.symbol_end(); ++symbol){
 		//cout << "类型：" << endl << symbol->get_type_name() << endl;
 		qrres = symbol->get_data();
-		//cout << "	学号：" << qrres<< endl;
+		cout << "	学号：" << qrres<< endl;
 	}
 
 	imageZbar.set_data(NULL, 0);

@@ -110,6 +110,12 @@ F-->|这条支线删除_直接在cpp里完成|zbar_xuehao_scan.py
   >
   > > 能不能将tensorflow的调用部分也用c++完成，不再调用python模块，完成一统
 
+- 2017年1月8日
+
+  > 问题：
+  >
+  > 每次主观题识别的时候都重复调用cnn模型，这个过程导致崩溃
+
 ## 资料参考
 
 [极客学院Tensorflow教程](http://wiki.jikexueyuan.com/project/tensorflow-zh/get_started/basic_usage.html)

@@ -270,7 +270,7 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 
 
 	/***part2:对每个选择题图像进行识别（含多选的情况）***/
-	cout << "[x] 选择题的的识别阶段(tess和cnn)" << endl;
+	cout << "[x] 每个选择题的的识别阶段(tess和cnn)" << endl;
 	tesseract::TessBaseAPI tess;
 	initOCR(tess);
 
@@ -278,8 +278,7 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 	bindTihaoAnswer(now, floodRects, "xuanzeti", recover);
 	sort(recover.begin(), recover.end(), SortByX);
 	
-	ostringstream select_tessres;
-	ostringstream select_cnnres;
+	ostringstream select_res;
 	string whats = "ABCD";
 
 	int n = 1, j = 0;
@@ -341,25 +340,28 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 			string answer_tessres;
 			vector<string> answer_tessres_detail;
 			vector<float> answer_tessres_detail_conf;
-			cout << "[x] tess阶段" << endl;
+			cout << "[x]:"<<j<<" tess阶段" << endl;
 			tess_ocr(tess, answern, answer_tessres,conf,answer_tessres_detail, answer_tessres_detail_conf);
-			cout << "[x] cnn阶段" << endl;
+			
+			//cout << "[x]:"<<j<<" cnn阶段" << endl;  //暂时关闭cnn接口的识别
 			string answer_cnnres="cnn结果"; //cnn_ocr(answern,whats);
+			
+			//结果判定和保存	
 			now_answer.pic = answer;
-			now_answer.content = answer_tessres;
+			now_answer.content = conf>70?answer_tessres:answer_cnnres;
 			now_answer.confidences = answer_tessres_detail_conf;
 
 			locs.push_back(now_answer);
 
-			select_tessres << answer_tessres << ",";
-			select_cnnres << answer_cnnres << ",";
-
-
-			//结果标注
+			select_res << now_answer.content << ",";
+		
+			//选择题结果标注
+			/*
 			float scale_img = (float)(600.f / preciseimg.rows);
 			float scale_font = 0.7; // (float)(abs(2 - scale_img)) / 1.2f;
 			Size word_size = getTextSize(answer_tessres, FONT_HERSHEY_SIMPLEX, (float)scale_font, (int)(3 * scale_font), NULL);
 			putText(preciseimg, answer_tessres, now_answer.where.tl(), FONT_HERSHEY_SIMPLEX, scale_font, Scalar(0, 0, 255), (int)(2 * scale_font));
+			*/
 
 			j++;
             cout<<"-----------------"<<endl; //标注一个选择题项的识别完成分割
@@ -369,10 +371,8 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 
 	closeOCR(tess);
 
-	string tessocr = select_tessres.str();
-	string cnnocr = select_cnnres.str();
+	string select_ocr = select_res.str();
 
-
-	//暂时先设定返回tess的结果
-	return tessocr;
+	//返回判定后的识别结果
+	return select_ocr;
 }

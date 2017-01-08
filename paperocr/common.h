@@ -56,7 +56,7 @@ bool SortByPx(const cv::Point &p1, const cv::Point &p2);
 bool SortBySx(const SLocAnswer &s1, const SLocAnswer &s2);
 
 //依次返回和，均值，方差，最大值，最小值
-int vectorstat(std::vector<float> invec, std::vector<float> outvec);
+int vectorstat(std::vector<float> invec, std::vector<float> & outvec);
 
 
 

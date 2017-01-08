@@ -9,6 +9,7 @@ using namespace std;
  * 输入：主观题精定位图像，区域标示（例如：zguanti_1）
  * 输出：（对多数字的支持）位置的单独识别结果（vector<SLocAnswer> &locs）
  * 返回：整个主观题的识别结果
+ * 问题： 此处没有记录整个主观题的结果
  */
 string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 {
@@ -16,7 +17,7 @@ string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs
     CV_Assert(!preciseimg.empty());
 	RNG rng = theRNG();
 
-	//图像漫水和分割（先二值化再漫水）
+	//首先将主观题分割成单个字符
 	Mat floodimg;
 	preciseimg.copyTo(floodimg);
 	cvtColor(floodimg, floodimg, CV_RGB2GRAY);
@@ -75,7 +76,7 @@ string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs
 				Mat tosave = nowmask(floodRect);
 				copyMakeBorder(tosave, tosave, 10,10,10,10, BORDER_CONSTANT,Scalar(0));
 	
-				
+				//处理的是主观题的细节
 				SLocAnswer s;
 				s.what = areaflag;
 				s.where = floodRect;
@@ -85,22 +86,24 @@ string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs
 		}
 	}
 
+	//对符合条件的主观题局部进行识别
 
 	/***part1:cnn识别和保存****/
+	//cout<<">>>主观题的cnn识别(拼接细分)"<<endl;
 	string whats = "0123456789";
-	sort(locs.begin(), locs.end(), SortBySx); 	   //对主观题多数字情况下进行位置左右划分
+	sort(locs.begin(), locs.end(), SortBySx); 	   //对主观题多数字情况下进行位置左右划分(此处也有问题啊)
 	ostringstream cnn_res;
-	for (vector<SLocAnswer>::iterator it = locs.begin(); it!= locs.end(); it++)
+	for (vector<SLocAnswer>::iterator it = locs.begin(); it!= locs.end(); it++)  //此处的locs里包含了太多信息，还包含选择题的
 	{
 		string res="cnn结果";//cnn_ocr(it->pic,whats);
 		it->content = res;
-		cnn_res << res;
+		cnn_res << res;		//cnn识别的组合结果
 	}
 
 	string cnnocr = cnn_res.str();
 
 	/***part2:tess识别和保存*****/
-    cout<<">>>主观题的tess识别"<<endl;
+    //cout<<">>>主观题的tess识别(整体)"<<endl;
 	tesseract::TessBaseAPI tess;
 	initOCR(tess);
 
@@ -113,12 +116,34 @@ string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs
 	closeOCR(tess);
 
 	/***part3:结果评判***/
-	vector<float> statres;
-	vectorstat(confidences, statres);
-	if (statres[1] > 70)
-		return tessocr;
+	if(confidences.size()==0)
+	{
+		if (conf>70)
+		{
+			cout<<"无细节，返回tess的结果"<<endl;
+			return tessocr;
+		}
+		else
+		{
+			cout<<"无细节，返回cnn的结果"<<endl;
+			return cnnocr;
+		}
+	}
 	else
-		return cnnocr;
+	{
+		vector<float> statres;
+		vectorstat(confidences, statres);
+		if (statres[1] > 70)
+	    {	
+	        cout<<"返回tess的结果"<<endl;
+	        return tessocr;
+	    }
+		else
+	    {
+	    	cout<<"返回cnn的结果"<<endl;
+			return cnnocr;
+	    }
+    }
 }
 
 

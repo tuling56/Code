@@ -235,7 +235,7 @@ int preciseloc(Mat roughimg,string areaflag,vector<SLocAnswer> &precise_boxes)
  					SLocAnswer part_zuguan;
 					ostringstream s1;
 					s1 << areaflag<<"_" << num++;
-					cout<<"now"<<s1.str()<<endl;
+					cout<<"now_zuguan:"<<s1.str()<<endl;
 					part_zuguan.what = s1.str();
 					part_zuguan.where = floodRect;
 					part_zuguan.pic = roughimg(floodRect);
