@@ -39,7 +39,7 @@ string  singleproc(string filename,string resTrainpath)
 	
 	//step2:精确定位
 	cout << "=================part2:精定位===================" << endl;
-	string xuehao;
+	string ocrinfo;
 	for (vector<SRPart>::iterator itr=rough_area.begin();itr!=rough_area.end();itr++)
 	{
 		cout << "[step1]: " << itr->what << " precise_loc" << endl;
@@ -48,25 +48,24 @@ string  singleproc(string filename,string resTrainpath)
 		string areaflag = itr->what;	
 		Mat rough = src(itr->where);
 		preciseloc(rough,areaflag,precise_area);
-		if (areaflag=="zuguanti")
-			cout<<"主观题区域的个数"<<precise_area.size()<<endl;
 		
 		cout << "[step2]: " << itr->what << " ocr" << endl;
 
 		for (vector<SLocAnswer>::iterator itp = precise_area.begin(); itp != precise_area.end();itp++)
 		{
-			cout<<"----"<<itp->what<<"--------"<<endl;
 			Mat precise = rough(itp->where);
-			xuehao=getanswer(precise,itp->what,loc_answer);
-			if (xuehao == "xuehaoerror") break;
+			ocrinfo=getanswer(precise,itp->what,loc_answer);  
 		}
+
+		if (areaflag=="xuehao" && ocrinfo=="xuehaoerror")   //放在外层循环，当检测到学号错误的时候，直接返回，不再处理其他
+			break;
 	}
 
 
-	//结果文件保存以再训练
+	//结果文件保存以再训练（所有的细项和识别结果）
 	savetotrain(resTrainpath,loc_answer);
 	
-    //最终json格式结果返回
+    //最终json格式结果返回（指定的精确项，是细项的上一层）
     string fres=savetojson(filename,xuehao,loc_answer);
 
 	return fres;

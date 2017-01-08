@@ -24,12 +24,19 @@ string areaDecomposeOCR( Mat preciseimg,string areaflag,vector<SLocAnswer> &locs
 	}
 	else if (areaflag=="xuanzeti"){
 		cout << "****选择题区识别*****" << endl;
-		selectProcess(preciseimg, areaflag, locs);    //此处选择题不返回识别结果
+		string selectinfo=selectProcess(preciseimg, areaflag, locs); 
+		if (selectinfo=="")
+			return "selecterror";
+		else  
+			return selectinfo;
 	}
 	else if (areaflag.find("zuguanti_")!=string::npos){
 		cout << "****解答题区识别******" << endl;
 		string zuguaninfo=zuguantiProcess(preciseimg, areaflag, locs);	//处理的是每个主观题（小主观）
-		return zuguaninfo;
+		if(zuguaninfo=="")
+			return "zuguanerror";
+		else
+			return zuguaninfo;
 	}
 	else{
 		cout << "非定义的识别区域" << endl;

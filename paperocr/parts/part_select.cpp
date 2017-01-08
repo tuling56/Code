@@ -206,10 +206,11 @@ int areaAdjust(Mat &img, Mat &srcn)
  * 输出：位置和识别结果
  * 返回：依次选择题识别结果
  */
-string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
+string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &wlocs)
 {
 	CV_Assert(!preciseimg.empty());
 	RNG rng = theRNG();
+
 
 	/***part1:图像漫水和分割（先二值化再漫水）,得到每个选择题图像***/
 	Mat floodimg;
@@ -270,6 +271,7 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 
 
 	/***part2:对每个选择题图像进行识别（含多选的情况）***/
+	vector<SLocAnswer> &locs
 	cout << "[x] 每个选择题的的识别阶段(tess和cnn)" << endl;
 	tesseract::TessBaseAPI tess;
 	initOCR(tess);
@@ -370,6 +372,8 @@ string selectProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
 	}
 
 	closeOCR(tess);
+
+	wlocs.insert(locs.begin(), locs.end()); //将选择题的处理结果插入最终的识别结果序列
 
 	string select_ocr = select_res.str();
 

@@ -11,7 +11,7 @@ using namespace std;
  * 返回：整个主观题的识别结果
  * 问题： 此处没有记录整个主观题的结果
  */
-string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs)
+string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &wlocs)
 {
 	cout<<areaflag<<" 的识别"<<endl;
     CV_Assert(!preciseimg.empty());
@@ -41,6 +41,8 @@ string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs
 
 	bool iscontain = false;
 	vector<Rect> floodRects;
+
+	vector<SLocAnswer> &locs
 	for (int y = 0; y < preciseimg.rows; y++)
 	{
 		for (int x = 0; x < preciseimg.cols; x++)
@@ -93,7 +95,7 @@ string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs
 	string whats = "0123456789";
 	sort(locs.begin(), locs.end(), SortBySx); 	   //对主观题多数字情况下进行位置左右划分(此处也有问题啊)
 	ostringstream cnn_res;
-	for (vector<SLocAnswer>::iterator it = locs.begin(); it!= locs.end(); it++)  //此处的locs里包含了太多信息，还包含选择题的
+	for (vector<SLocAnswer>::iterator it = locs.begin(); it!= locs.end(); it++)  
 	{
 		string res="cnn结果";//cnn_ocr(it->pic,whats);
 		it->content = res;
@@ -110,10 +112,25 @@ string zuguantiProcess(Mat preciseimg, string areaflag, vector<SLocAnswer> &locs
 	int conf = 0;
 	string tessocr;
 	vector<string> tessocr_detail;
-	vector<float> confidences;
+	vector<Mat> tessocr_detail_pic;
+	vector<float> tessocr_detail_confidence;
 	tess_ocr(tess, preciseimg, tessocr, conf, tessocr_detail,confidences);
 
 	closeOCR(tess);
+
+	//细节存入
+	vector<Sinfo> dinfo;
+	for (int i = 0; i < tessocr_detail.size(); ++i)
+	{
+		Struct sinfo;
+		sinfo.content=tessocr_detail[i];
+		sinfo.pic=tessocr_detail_pic[i]
+		sinfo.confidence=tessocr_detail_confidence[i];
+		dinfo.push_back(sinfo);
+	}
+	now_answer.dinfo=dinfo;
+
+	wlocs.insert(locs.begin(), locs.end()); //将主观题的处理结果插入最终的识别结果序列
 
 	/***part3:结果评判***/
 	if(confidences.size()==0)
