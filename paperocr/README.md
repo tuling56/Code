@@ -116,6 +116,12 @@ F-->|这条支线删除_直接在cpp里完成|zbar_xuehao_scan.py
   >
   > 每次主观题识别的时候都重复调用cnn模型，这个过程导致崩溃
 
+- 2017年5月23日
+
+  > 问题：
+  >
+  > 决定重启深度学习的项目，在大方向上做出突破的进展
+
 ## 资料参考
 
 [极客学院Tensorflow教程](http://wiki.jikexueyuan.com/project/tensorflow-zh/get_started/basic_usage.html)
